@@ -1,0 +1,72 @@
+version: '3.8'
+services:
+
+#OptiMateDB POSTGRES
+  optimate-db:
+    container_name: optimate-db
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: optimate-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - optimate-data:/var/lib/postgresql/data
+    networks:
+      - optimate
+
+#OptiMate-manager
+  optimate-manager:
+    container_name: optimate-manager
+    image: optimate/manager:latest
+    build:
+      context: ./optimate-manager/
+      dockerfile: ./src/main/docker/Dockerfile.native-micro   #Dockerfile.jvm
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://optimate-db:5432/optimate-db
+      QUARKUS_DATASOURCE_USERNAME: postgres
+      QUARKUS_DATASOURCE_PASSWORD: postgres
+      MP_JWT_VERIFY_PUBLICKEY_LOCATION: /jwt/publicKey.pem
+    ports:
+      - 8080:8080
+    volumes:
+      - type: bind
+        source: ./jwt
+        target: /jwt
+    depends_on:
+      - optimate-db
+    networks:
+      - optimate
+
+#OptiMate-jwt
+  optimate-jwt:
+    container_name: optimate-jwt
+    image: optimate/jwt:latest
+    build:
+      context: ./optimate-jwt/
+      dockerfile: ./src/main/docker/Dockerfile.native-micro
+    environment:
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://optimate-db:5432/optimate-db
+      QUARKUS_DATASOURCE_USERNAME: postgres
+      QUARKUS_DATASOURCE_PASSWORD: postgres
+      SMALLRYE_JWT_SIGN_KEY_LOCATION: /jwt/privateKey.pem
+    ports:
+      - 8081:8081
+    volumes:
+      - type: bind
+        source: ./jwt
+        target: /jwt
+    depends_on:
+      - optimate-db
+    networks:
+      - optimate
+
+volumes:
+  optimate-data:
+
+networks:
+  optimate:
+    name: quarkus-optimate-network
+    driver: bridge
