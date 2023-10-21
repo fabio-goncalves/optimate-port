@@ -9,6 +9,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 
 @Path("/api/user")
 @RolesAllowed("admin")
@@ -52,5 +55,11 @@ public class UserResource extends AbstractResource<UserService> {
     @Path("/deleteUser")
     public Response deleteUser(@PathParam("id") long id) {
         return Response.ok(service.deleteUser(id)).build();
+    }
+
+    @POST
+    @Path("/uploadAvatar/{id}")
+    public Response uploadAvatar(@PathParam("id") long id, String avatar) throws URISyntaxException, IOException, InterruptedException {
+        return Response.ok(service.uploadAvatar(id, avatar)).build();
     }
 }

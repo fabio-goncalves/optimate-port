@@ -1,15 +1,16 @@
 package br.com.optimate.manager.service;
 
+import br.com.optimate.manager.domain.user.Avatar;
 import br.com.optimate.manager.domain.user.User;
 import br.com.optimate.manager.dto.UserDto;
 import br.com.optimate.manager.dto.UserMapper;
+import br.com.optimate.manager.repository.AvatarRepository;
 import br.com.optimate.manager.repository.UserRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.ClientErrorException;
-import jakarta.ws.rs.Path;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -24,6 +25,10 @@ public class UserService implements AbstractService {
     UserRepository userRepository;
     @Inject
     UserMapper userMapper;
+    @Inject
+    AvatarService avatarService;
+    @Inject
+    AvatarRepository avatarRepository;
     private final JsonWebToken jwt;
 
     @Inject
@@ -37,6 +42,8 @@ public class UserService implements AbstractService {
         optionalUser.ifPresent(user -> {
             throw new WebApplicationException("Username já cadastrado!", Response.Status.BAD_REQUEST);
         });
+        if(Optional.ofNullable(userDto.getAvatar()).isPresent())
+            userDto.setAvatar(null);
         User user = userMapper.toEntity(userDto);
         userRepository.persist(user);
         return userMapper.toDto(user);
@@ -75,7 +82,6 @@ public class UserService implements AbstractService {
     }
 
     @Transactional
-    @Path("/changePassword")
     public UserDto changePassword(String currentPassword, String newPassword) {
         Optional<UserDto> optionalUserDto = Optional.ofNullable(getCurrentUser());
         optionalUserDto.ifPresent(userDto -> {
@@ -85,6 +91,22 @@ public class UserService implements AbstractService {
             user.setPassword(BcryptUtil.bcryptHash(newPassword));
         });
         return optionalUserDto.orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
+    }
+
+    @Transactional
+    public UserDto uploadAvatar(long id, String avatarImage) {
+        Optional<User> optionalUser = userRepository.findByIdOptional(id);
+        User user = optionalUser.orElseThrow(() ->
+                new WebApplicationException("Username não encontrado!", Response.Status.NOT_FOUND));
+        if(avatarImage.isEmpty())
+            user.setAvatar(avatarService.createAvatarDefault(user));
+        else {
+            Avatar avatar = new Avatar(user);
+            avatar.setAvatar220(avatarImage);
+            avatarRepository.persist(avatar);
+        }
+        userRepository.persist(user);
+        return userMapper.toDto(user);
     }
 
     public boolean matches(User user, String password) {

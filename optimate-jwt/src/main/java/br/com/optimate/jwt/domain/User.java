@@ -29,6 +29,8 @@ public class User {
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "role")
     private List<String> roles;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private Avatar avatar;
 
     public String getUsername() {
         return username;
@@ -60,5 +62,13 @@ public class User {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
     }
 }

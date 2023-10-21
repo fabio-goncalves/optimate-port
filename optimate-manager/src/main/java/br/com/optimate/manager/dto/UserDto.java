@@ -2,6 +2,8 @@ package br.com.optimate.manager.dto;
 
 import br.com.optimate.manager.domain.company.Company;
 import br.com.optimate.manager.domain.user.Avatar;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.quarkus.runtime.annotations.IgnoreProperty;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
