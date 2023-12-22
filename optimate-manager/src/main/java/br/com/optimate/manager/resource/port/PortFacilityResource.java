@@ -22,20 +22,20 @@ public class PortFacilityResource extends AbstractResource<PortFacilityService> 
 
     @GET
     @Path("/listAll")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin", "user"})
     public Response listAll() {
-        return Response.ok(service.listAll()).status(Response.Status.FOUND).build();
+        return Response.ok(service.listAll()).build();
     }
 
     @GET
     @Path("/findPortFacilityByName")
     public Response findPortFacilityByName(PortFacilityDto portFacilityDto) {
-        return Response.ok(service.findPortFacilityByName(portFacilityDto)).status(Response.Status.FOUND).build();
+        return Response.ok(service.findPortFacilityByName(portFacilityDto)).build();
     }
 
     @POST
     @Path("/editPortFacility")
     public Response editPortFacility(PortFacilityDto portFacilityDto) {
-        return Response.ok(service.editPortFacility(portFacilityDto)).status(Response.Status.FOUND).build();
+        return Response.ok(service.editPortFacility(portFacilityDto)).build();
     }
 }

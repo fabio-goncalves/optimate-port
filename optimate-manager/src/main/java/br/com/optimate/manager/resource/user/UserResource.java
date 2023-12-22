@@ -3,14 +3,10 @@ package br.com.optimate.manager.resource.user;
 import br.com.optimate.manager.dto.UserDto;
 import br.com.optimate.manager.resource.AbstractResource;
 import br.com.optimate.manager.service.UserService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 
 @Path("/api/user")
@@ -27,7 +23,7 @@ public class UserResource extends AbstractResource<UserService> {
 
     @GET
     @Path("/listAll")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin", "user"})
     public Response listAll() {
         return Response.ok(service.listAll()).build();
     }
@@ -41,12 +37,12 @@ public class UserResource extends AbstractResource<UserService> {
     @POST
     @Path("/editUser")
     public Response editUser(UserDto userDto) {
-        return Response.ok(service.editUser(userDto)).status(Response.Status.CREATED).build();
+        return Response.ok(service.editUser(userDto)).build();
     }
 
     @GET
     @Path("/currentUser")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin", "user"})
     public Response getCurrentUser() {
         return Response.ok(service.getCurrentUser()).build();
     }
@@ -59,7 +55,7 @@ public class UserResource extends AbstractResource<UserService> {
 
     @POST
     @Path("/uploadAvatar/{id}")
-    public Response uploadAvatar(@PathParam("id") long id, String avatar) throws URISyntaxException, IOException, InterruptedException {
+    public Response uploadAvatar(@PathParam("id") long id, String avatar) {
         return Response.ok(service.uploadAvatar(id, avatar)).build();
     }
 }

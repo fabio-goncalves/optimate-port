@@ -12,6 +12,7 @@ public class LoginDto {
     private String token;
     private List<String> roles;
     private String avatar;
+    private String name;
 
     public String getUsername() {
         return username;
@@ -51,5 +52,13 @@ public class LoginDto {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

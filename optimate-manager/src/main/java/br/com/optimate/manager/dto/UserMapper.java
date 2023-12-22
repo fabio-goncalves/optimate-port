@@ -17,7 +17,9 @@ public interface UserMapper {
     @Mapping(target = "id", source = "id")
     UserDto toDto(User user);
 
+    @Mapping(target = "avatar", ignore = true)
     List<User> toEntityList(List<UserDto> userDtoList);
 
+    @Mapping(target = "avatar", ignore = true)
     List<UserDto> toDtoList(List<User> userList);
 }

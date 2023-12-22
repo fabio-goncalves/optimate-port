@@ -24,6 +24,8 @@ public class User {
     private String password;
     @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
     @Roles
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "id"))
@@ -60,6 +62,14 @@ public class User {
         this.firstName = firstName;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
@@ -70,5 +80,9 @@ public class User {
 
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    public String getFullName() {
+        return String.format("%s %s", this.firstName, this.lastName);
     }
 }

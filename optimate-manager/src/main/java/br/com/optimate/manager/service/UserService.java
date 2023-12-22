@@ -49,6 +49,7 @@ public class UserService implements AbstractService {
         return userMapper.toDto(user);
     }
 
+    @Transactional
     public List<UserDto> listAll() {
         return userMapper.toDtoList(userRepository.listAll());
     }
@@ -56,7 +57,7 @@ public class UserService implements AbstractService {
     public UserDto findUserByUsername(UserDto userDto) {
         Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getUsername()));
         User user = optionalUser.orElseThrow(() ->
-                new WebApplicationException("Username não encontrado!", Response.Status.NOT_FOUND));
+                new WebApplicationException(Response.Status.NOT_FOUND));
         return userMapper.toDto(user);
     }
 
@@ -64,7 +65,7 @@ public class UserService implements AbstractService {
     public UserDto editUser(UserDto userDto) {
         Optional<User> optionalUser = userRepository.findByIdOptional(userDto.getId());
         User user = optionalUser.orElseThrow(() ->
-                new WebApplicationException("Username não encontrado!", Response.Status.NOT_FOUND));
+                new WebApplicationException(Response.Status.NOT_FOUND));
         userRepository.persist(userMapper.toEntity(userDto));
         return userMapper.toDto(user);
     }

@@ -30,6 +30,8 @@ public class LoginService implements AbstractService {
         loginDto.setToken(TokenGenerator.generateToken(userFound.getUsername(), userFound.getFirstName(), userFound.getRoles()));
         loginDto.setRoles(userFound.getRoles());
         loginDto.setAvatar(userFound.getAvatar().getAvatar220());
+        loginDto.setName(userFound.getFullName());
+        loginDto.setUsername(userFound.getUsername());
         return loginDto;
     }
 

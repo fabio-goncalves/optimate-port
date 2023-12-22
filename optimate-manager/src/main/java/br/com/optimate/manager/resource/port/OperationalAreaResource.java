@@ -30,7 +30,7 @@ public class OperationalAreaResource extends AbstractResource<OperationalAreaSer
     @GET
     @Path("/findMooringLocationByAcronym")
     public Response findMooringLocationByAcronym(OperationalAreaDto operationalAreaDto) {
-        return Response.ok(service.findMooringLocationByAcronym(operationalAreaDto)).status(Response.Status.FOUND).build();
+        return Response.ok(service.findMooringLocationByAcronym(operationalAreaDto)).status(Response.Status.OK).build();
     }
 
     @POST

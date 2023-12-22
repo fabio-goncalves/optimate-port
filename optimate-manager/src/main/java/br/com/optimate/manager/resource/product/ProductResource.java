@@ -22,15 +22,15 @@ public class ProductResource extends AbstractResource<ProductService> {
 
     @GET
     @Path("/listAll")
-    @RolesAllowed("user")
+    @RolesAllowed({"admin", "user"})
     public Response listAll() {
-        return Response.ok(service.listAll()).status(Response.Status.FOUND).build();
+        return Response.ok(service.listAll()).build();
     }
 
     @GET
     @Path("/findProductByAcronym")
     public Response findProductByAcronym(ProductDto productDto) {
-        return Response.ok(service.findProductByAcronym(productDto)).status(Response.Status.FOUND).build();
+        return Response.ok(service.findProductByAcronym(productDto)).build();
     }
 
     @POST

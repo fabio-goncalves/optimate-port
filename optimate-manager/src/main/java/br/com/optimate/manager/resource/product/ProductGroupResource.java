@@ -21,16 +21,16 @@ public class ProductGroupResource extends AbstractResource<ProductGroupService> 
     }
 
     @GET
-    @Path("/listaALl")
-    @RolesAllowed("user")
+    @Path("/listAll")
+    @RolesAllowed({"admin", "user"})
     public Response listAll() {
-        return Response.ok(service.listAll()).status(Response.Status.FOUND).build();
+        return Response.ok(service.listAll()).build();
     }
 
     @GET
     @Path("/findProductByAcronym")
     public Response findProductGroupByAcronym(ProductGroupDto productGroupDto) {
-        return Response.ok(service.findListProductByAcronym(productGroupDto)).status(Response.Status.FOUND).build();
+        return Response.ok(service.findListProductByAcronym(productGroupDto)).build();
     }
 
     @POST
