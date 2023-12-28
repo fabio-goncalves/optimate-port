@@ -16,10 +16,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class ProductService implements AbstractService {
 
-    @Inject
     ProductRepository productRepository;
-    @Inject
     ProductMapper productMapper;
+
+    @Inject
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
+    }
 
     @Transactional
     public ProductDto saveProduct(ProductDto productDto) {

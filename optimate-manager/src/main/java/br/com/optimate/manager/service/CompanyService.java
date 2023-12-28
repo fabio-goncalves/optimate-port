@@ -17,10 +17,15 @@ import java.util.Optional;
 @ApplicationScoped
 public class CompanyService implements AbstractService {
 
-    @Inject
+
     CompanyRepository companyRepository;
-    @Inject
     CompanyMapper companyMapper;
+
+    @Inject
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper) {
+        this.companyRepository = companyRepository;
+        this.companyMapper = companyMapper;
+    }
 
     @Transactional
     public CompanyDto saveCompany(CompanyDto companyDTO) {

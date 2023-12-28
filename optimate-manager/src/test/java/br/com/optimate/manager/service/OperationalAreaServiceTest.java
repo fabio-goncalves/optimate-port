@@ -1,6 +1,7 @@
 package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.port.OperationalArea;
+import br.com.optimate.manager.dto.OperationalAreaDto;
 import br.com.optimate.manager.repository.OperationalAreaRepository;
 import br.com.optimate.manager.dto.OperationalAreaMapper;
 import io.quarkus.test.InjectMock;
@@ -27,6 +28,7 @@ class OperationalAreaServiceTest {
     @InjectMock
     OperationalAreaRepository operationalAreaRepository;
     OperationalArea operationalArea;
+    OperationalAreaDto operationalAreaDto;
     List<OperationalArea> operationalAreaList;
 
     @BeforeEach
@@ -35,18 +37,19 @@ class OperationalAreaServiceTest {
                 "Terminal de Múltiplo Uso 1", null);
         OperationalArea operationalArea1 = new OperationalArea(1L, "AREA14", "BRSTMARE0002", "Área 14", "Terminal de passageiros", null);
         this.operationalAreaList = List.of(operationalArea, operationalArea1);
+        this.operationalAreaDto = operationalAreaMapper.toDto(operationalArea);
     }
 
     @Test
     void saveOperationalArea() {
         Mockito.when(operationalAreaRepository.findMooringLocationByAcronym(Mockito.anyString())).thenReturn(null);
-        assertEquals(operationalArea.getId(), operationalAreaService.saveOperationalArea(operationalAreaMapper.toDto(operationalArea)).getId());
+        assertEquals(operationalArea.getId(), operationalAreaService.saveOperationalArea(operationalAreaDto).getId());
     }
 
     @Test
     void saveOperationalAreaWithExistsOperacionalArea() {
         Mockito.when(operationalAreaRepository.findMooringLocationByAcronym(Mockito.anyString())).thenReturn(operationalArea);
-        Assertions.assertThrows(WebApplicationException.class, () -> operationalAreaService.saveOperationalArea(operationalAreaMapper.toDto(operationalArea)));
+        Assertions.assertThrows(WebApplicationException.class, () -> operationalAreaService.saveOperationalArea(operationalAreaDto));
     }
 
     @Test
@@ -59,19 +62,19 @@ class OperationalAreaServiceTest {
     @Test
     void findMooringLocationByAcronym() {
         Mockito.when(operationalAreaRepository.findMooringLocationByAcronym(Mockito.anyString())).thenReturn(operationalArea);
-        assertEquals(operationalArea.getAcronym(), operationalAreaService.findMooringLocationByAcronym(operationalAreaMapper.toDto(operationalArea)).getAcronym());
+        assertEquals(operationalArea.getAcronym(), operationalAreaService.findMooringLocationByAcronym(operationalAreaDto).getAcronym());
     }
 
     @Test
     void findMooringLocationByAcronymWithNullParameter() {
         Mockito.when(operationalAreaRepository.findMooringLocationByAcronym(Mockito.anyString())).thenReturn(operationalArea);
-        Assertions.assertThrows(WebApplicationException.class, () -> operationalAreaService.saveOperationalArea(operationalAreaMapper.toDto(operationalArea)));
+        Assertions.assertThrows(WebApplicationException.class, () -> operationalAreaService.saveOperationalArea(operationalAreaDto));
     }
 
     @Test
     void editMooringLocation() {
         operationalArea.setAcronym("AREA01_edit");
         Mockito.when(operationalAreaRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.ofNullable(operationalArea));
-        assertEquals("AREA01_edit", operationalAreaService.editMooringLocation(operationalAreaMapper.toDto(operationalArea)).getAcronym());
+        assertEquals("AREA01_edit", operationalAreaService.editMooringLocation(operationalAreaDto).getAcronym());
     }
 }

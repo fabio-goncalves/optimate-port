@@ -4,8 +4,10 @@ import br.com.optimate.manager.domain.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 @Entity
+@Data
 @SequenceGenerator(initialValue = 10, name = "seq_bussiness_area", sequenceName = "bussiness_area")
 public class BusinessArea implements AbstractEntity {
 
@@ -31,23 +33,4 @@ public class BusinessArea implements AbstractEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

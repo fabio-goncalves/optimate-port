@@ -2,9 +2,9 @@ package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.port.Berth;
 import br.com.optimate.manager.domain.port.MooringLocation;
-import br.com.optimate.manager.repository.MooringLocationRepository;
 import br.com.optimate.manager.dto.MooringLocationDto;
 import br.com.optimate.manager.dto.MooringLocationMapper;
+import br.com.optimate.manager.repository.MooringLocationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -17,10 +17,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class MooringLocationService implements AbstractService {
 
-    @Inject
     MooringLocationRepository mooringLocationRepository;
-    @Inject
     MooringLocationMapper mooringLocationMapper;
+
+    @Inject
+    public MooringLocationService(MooringLocationRepository mooringLocationRepository, MooringLocationMapper mooringLocationMapper) {
+        this.mooringLocationRepository = mooringLocationRepository;
+        this.mooringLocationMapper = mooringLocationMapper;
+    }
 
     @Transactional
     public MooringLocationDto saveMooringLocation(MooringLocationDto mooringLocationDto) {

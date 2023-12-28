@@ -1,6 +1,7 @@
 package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.port.Port;
+import br.com.optimate.manager.dto.PortDto;
 import br.com.optimate.manager.repository.PortRepository;
 import br.com.optimate.manager.dto.PortMapper;
 import io.quarkus.test.InjectMock;
@@ -26,6 +27,7 @@ class PortServiceTest {
     @InjectMock
     PortRepository portRepository;
     Port port;
+    PortDto portDto;
     List<Port> portList;
 
     @BeforeEach
@@ -33,18 +35,19 @@ class PortServiceTest {
         this.port = new Port(1L, "ST", "STM", "Porto de Santarém", null);
         Port port1 = new Port(2L, "PC", "PVC", "Porto de Vila do Conde", null);
         this.portList = List.of(port, port1);
+        this.portDto = portMapper.toDto(port);
     }
 
     @Test
     void savePort() {
         Mockito.when(portRepository.findPortByName(Mockito.anyString())).thenReturn(null);
-        Assertions.assertEquals(port.getName(), portService.savePort(portMapper.toDto(port)).getName());
+        Assertions.assertEquals(port.getName(), portService.savePort(portDto).getName());
     }
 
     @Test
     void savePortWithExitedPort() {
         Mockito.when(portRepository.findPortByName(Mockito.anyString())).thenReturn(port);
-        Assertions.assertThrows(WebApplicationException.class, () -> portService.savePort(portMapper.toDto(port)));
+        Assertions.assertThrows(WebApplicationException.class, () -> portService.savePort(portDto));
     }
 
     @Test
@@ -57,20 +60,21 @@ class PortServiceTest {
     @Test
     void findPortByName() {
         Mockito.when(portRepository.findPortByName(Mockito.anyString())).thenReturn(port);
-        Assertions.assertEquals(port.getName(), portService.findPortByName(portMapper.toDto(port)).getName());
+        Assertions.assertEquals(port.getName(), portService.findPortByName(portDto).getName());
     }
 
     @Test
     void findPortByNameWithNullParameter() {
         port.setName(null);
         Mockito.when(portRepository.findPortByName(Mockito.anyString())).thenReturn(null);
-        Assertions.assertThrows(WebApplicationException.class, () -> portService.findPortByName(portMapper.toDto(port)));
+        Assertions.assertThrows(WebApplicationException.class, () -> portService.findPortByName(portDto));
     }
 
     @Test
     void editPort() {
-        port.setName("Porto de Outeiro");
+        portDto.setName("Porto de Outeiro");
         Mockito.when(portRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.ofNullable(port));
-        Assertions.assertEquals("Porto de Outeiro", portService.editPort(portMapper.toDto(port)).getName());
+        Assertions.assertEquals("Porto de Outeiro", portService.editPort(portDto).getName());
+        Mockito.verify(portRepository).persist(port);
     }
 }

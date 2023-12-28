@@ -1,6 +1,7 @@
 package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.company.BusinessArea;
+import br.com.optimate.manager.dto.BusinessAreaDto;
 import br.com.optimate.manager.repository.BusinessAreaRepository;
 import br.com.optimate.manager.dto.BusinessAreaMapper;
 import io.quarkus.test.InjectMock;
@@ -25,6 +26,7 @@ class BusinessAreaServiceTest {
     @Inject
     BusinessAreaMapper businessAreaMapper;
     BusinessArea businessArea;
+    BusinessAreaDto businessAreaDto;
     List<BusinessArea> businessAreaList;
 
     @BeforeEach
@@ -32,18 +34,19 @@ class BusinessAreaServiceTest {
         this.businessArea = new BusinessArea(1L, "Agente", "Empresa Responsável pela operação portuária");
         BusinessArea businessArea1 = new BusinessArea(2L, "Armador", "Dono da embarcação");
         this.businessAreaList = List.of(businessArea, businessArea1);
+        this.businessAreaDto = businessAreaMapper.toDto(businessArea);
     }
 
     @Test
     void saveBusinessAreaWithExistsBusinessArea() {
         Mockito.when(businessAreaRepositoryMock.findByName(Mockito.anyString())).thenReturn(businessArea);
-        Assertions.assertThrows(WebApplicationException.class, () -> businessAreaService.saveBusinessArea(businessAreaMapper.toDto(businessArea)));
+        Assertions.assertThrows(WebApplicationException.class, () -> businessAreaService.saveBusinessArea(businessAreaDto));
     }
 
     @Test
     void saveBusinessArea() {
         Mockito.when(businessAreaRepositoryMock.findByName(Mockito.anyString())).thenReturn(null);
-        Assertions.assertEquals(businessAreaMapper.toDto(businessArea).getId(), businessAreaService.saveBusinessArea(businessAreaMapper.toDto(businessArea)).getId());
+        Assertions.assertEquals(businessAreaMapper.toDto(businessArea).getId(), businessAreaService.saveBusinessArea(businessAreaDto).getId());
     }
 
     @Test
@@ -57,13 +60,13 @@ class BusinessAreaServiceTest {
     void editBusinessArea() {
         businessArea.setName("Agente alterado");
         Mockito.when(businessAreaRepositoryMock.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(businessArea));
-        Assertions.assertEquals("Agente alterado", businessAreaService.editBusinessArea(businessAreaMapper.toDto(businessArea)).getName());
+        Assertions.assertEquals("Agente alterado", businessAreaService.editBusinessArea(businessAreaDto).getName());
     }
 
     @Test
     void editBusinessAreaWithNoExistsBusinessArea() {
         businessArea.setName("Agente alterado");
         Mockito.when(businessAreaRepositoryMock.findById(Mockito.anyLong())).thenReturn(null);
-        Assertions.assertThrows(WebApplicationException.class, () -> businessAreaService.editBusinessArea(businessAreaMapper.toDto(businessArea)));
+        Assertions.assertThrows(WebApplicationException.class, () -> businessAreaService.editBusinessArea(businessAreaDto));
     }
 }

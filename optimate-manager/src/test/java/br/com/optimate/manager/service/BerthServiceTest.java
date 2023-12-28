@@ -1,6 +1,7 @@
 package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.port.Berth;
+import br.com.optimate.manager.dto.BerthDto;
 import br.com.optimate.manager.repository.BerthRepository;
 import br.com.optimate.manager.dto.BerthMapper;
 import io.quarkus.test.InjectMock;
@@ -25,16 +26,26 @@ class BerthServiceTest {
     @InjectMock
     BerthRepository berthRepositoryMock;
     Berth berth;
+    BerthDto berthDto;
     List<Berth> berthList;
 
 
     @BeforeEach
     void init() {
-        this.berth = new Berth(1L, "101", "101Antaq", "Berço 101", 10.3,
-                13.1, 7.5, 1, 13, 2.2, null, null);
-        Berth berth1 = new Berth(2L, "102", "102Antaq", "Berço 102", 10.3,
-                13.1, 7.5, 1, 13, 2.2, null, null);
+        this.berth = new Berth.BerthBuilder("101", "101Antaq", "Berço 101")
+                .length(10.3)
+                .airDraftMax(13.1)
+                .draftMax(7.5)
+                .initialHeader(1)
+                .finalHeader(13).build();
+        Berth berth1 = new Berth.BerthBuilder("102", "102Antaq", "Berço 102")
+                .length(10.3)
+                .airDraftMax(13.1)
+                .draftMax(7.5)
+                .initialHeader(1)
+                .finalHeader(13).build();
         this.berthList = List.of(berth, berth1);
+        this.berthDto = berthMapper.toDto(berth);
     }
 
     @Test
@@ -46,7 +57,7 @@ class BerthServiceTest {
     @Test
     void saveBerthWithExistsBerth() {
         Mockito.when(berthRepositoryMock.findBerthByacronymBerth(Mockito.any())).thenReturn(berth);
-        Assertions.assertThrows(WebApplicationException.class, () -> berthService.saveBerth(berthMapper.toDto(berth)));
+        Assertions.assertThrows(WebApplicationException.class, () -> berthService.saveBerth(berthDto));
     }
 
     @Test
@@ -64,8 +75,14 @@ class BerthServiceTest {
 
     @Test
     void editBerth() {
-        berth.setName("Berço 105");
-        Mockito.when(berthRepositoryMock.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(berth));
-        Assertions.assertEquals("Berço 105", berthService.editBerth(berthMapper.toDto(berth)).getName());
+        Berth editBerth = new Berth.BerthBuilder("101", "101Antaq", "Berço 105")
+                .id(1L)
+                .length(10.3)
+                .airDraftMax(13.1)
+                .draftMax(7.5)
+                .initialHeader(1)
+                .finalHeader(13).build();
+        Mockito.when(berthRepositoryMock.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(editBerth));
+        Assertions.assertEquals("Berço 105", berthService.editBerth(berthMapper.toDto(editBerth)).getName());
     }
 }

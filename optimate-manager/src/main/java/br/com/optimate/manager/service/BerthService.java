@@ -16,11 +16,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class BerthService implements AbstractService {
 
-    @Inject
     BerthRepository berthRepository;
-    @Inject
     BerthMapper berthMapper;
 
+    @Inject
+    public BerthService(BerthRepository berthRepository, BerthMapper berthMapper) {
+        this.berthRepository = berthRepository;
+        this.berthMapper = berthMapper;
+    }
     @Transactional
     public BerthDto saveBerth(BerthDto berthDTO) {
         Optional<Berth> berthOptional = Optional.ofNullable(berthRepository.findBerthByacronymBerth(berthDTO.getAcronymBerth()));

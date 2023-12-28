@@ -4,6 +4,7 @@ import br.com.optimate.manager.domain.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Entity
+@Data
 @SequenceGenerator(initialValue = 10, name = "seq_mooring", sequenceName = "seq_mooring")
 public class MooringLocation implements AbstractEntity {
 
@@ -40,32 +42,8 @@ public class MooringLocation implements AbstractEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAcronymMooring() {
-        return acronymMooring;
-    }
-
-    public void setAcronymMooring(String acronymMooring) {
-        this.acronymMooring = acronymMooring;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<Berth> getBerth() {
+    public List<Berth> getBerthList() {
         return berthList;
-    }
-
-    public void setBerth(List<Berth> berthList) {
-        this.berthList = berthList;
     }
 
     public void addBerth(Berth berth) {

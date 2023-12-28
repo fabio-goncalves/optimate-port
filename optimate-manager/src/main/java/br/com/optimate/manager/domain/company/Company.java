@@ -6,13 +6,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
+@Data
+@NoArgsConstructor(force = true)
 @SequenceGenerator(initialValue = 10, name = "seq_company", sequenceName = "seq_company")
 public class Company implements AbstractEntity {
 
@@ -21,57 +24,55 @@ public class Company implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 20)
-    private String acronym;
+    private final String acronym;
     @NotNull
     @Size(min = 1, max = 80)
-    private String name;
+    private final String name;
     @NotNull
     @Size(min = 1, max = 80)
-    private String cnpj;
+    private final String cnpj;
     @NotNull
     @Size(min = 1, max = 80)
-    private String razaoSocial;
+    private final String razaoSocial;
     @Size(max = 30)
-    private String inscricaoEstatual;
+    private final String inscricaoEstatual;
     @Size(max = 30)
-    private String inscricaoMunicipal;
+    private final String inscricaoMunicipal;
     @Size(max = 30)
-    private String phoneNumber;
+    private final String phoneNumber;
     @Size(max = 30)
-    private String cellPhone;
+    private final String cellPhone;
     @Email
     @Size(max = 100)
     @Column(length = 100, unique = true, nullable = false)
-    private String email;
+    private final String email;
     @NotNull
     @Column(nullable = false)
-    private Boolean isActive;
+    private final Boolean isActive;
     @ManyToOne
     @JoinColumn(name = "country_id")
-    private Country country;
+    private final Country country;
     @ManyToMany
     @JoinTable(name = "company_business",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "business_id"))
-    private List<BusinessArea> businessAreaList;
+    private final List<BusinessArea> businessAreaList;
 
-    public Company() {
-    }
 
-    public Company(Long id, String acronym, String name, String cnpj, String razaoSocial, String inscricaoEstatual, String inscricaoMunicipal, String phoneNumber, String cellPhone, String email, Boolean isActive, Country country, List<BusinessArea> businessAreaList) {
-        this.id = id;
-        this.acronym = acronym;
-        this.name = name;
-        this.cnpj = cnpj;
-        this.razaoSocial = razaoSocial;
-        this.inscricaoEstatual = inscricaoEstatual;
-        this.inscricaoMunicipal = inscricaoMunicipal;
-        this.phoneNumber = phoneNumber;
-        this.cellPhone = cellPhone;
-        this.email = email;
-        this.isActive = isActive;
-        this.country = country;
-        this.businessAreaList = businessAreaList;
+    private Company(CompanyBuilder companyBuilder) {
+        this.id = companyBuilder.id;
+        this.acronym = companyBuilder.acronym;
+        this.name = companyBuilder.name;
+        this.cnpj = companyBuilder.cnpj;
+        this.razaoSocial = companyBuilder.razaoSocial;
+        this.inscricaoEstatual = companyBuilder.inscricaoEstatual;
+        this.inscricaoMunicipal = companyBuilder.inscricaoMunicipal;
+        this.phoneNumber = companyBuilder.phoneNumber;
+        this.cellPhone = companyBuilder.cellPhone;
+        this.email = companyBuilder.email;
+        this.isActive = companyBuilder.isActive;
+        this.country = companyBuilder.country;
+        this.businessAreaList = companyBuilder.businessAreaList.isEmpty() ? new ArrayList<>(): companyBuilder.businessAreaList;
     }
 
     @Override
@@ -79,115 +80,13 @@ public class Company implements AbstractEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAcronym() {
-        return acronym;
-    }
-
-    public void setAcronym(String acronym) {
-        this.acronym = acronym;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public String getRazaoSocial() {
-        return razaoSocial;
-    }
-
-    public void setRazaoSocial(String razaoSocial) {
-        this.razaoSocial = razaoSocial;
-    }
-
-    public String getInscricaoEstatual() {
-        return inscricaoEstatual;
-    }
-
-    public void setInscricaoEstatual(String inscricaoEstatual) {
-        this.inscricaoEstatual = inscricaoEstatual;
-    }
-
-    public String getInscricaoMunicipal() {
-        return inscricaoMunicipal;
-    }
-
-    public void setInscricaoMunicipal(String inscricaoMunicipal) {
-        this.inscricaoMunicipal = inscricaoMunicipal;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getCellPhone() {
-        return cellPhone;
-    }
-
-    public void setCellPhone(String cellPhone) {
-        this.cellPhone = cellPhone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
-    public List<BusinessArea> getBusinessAreaList() {
-        return businessAreaList;
-    }
-
-    public void setBusinessAreaList(List<BusinessArea> businessAreaList) {
-        this.businessAreaList = businessAreaList;
-    }
-
     public void addBusinessArea(BusinessArea businessArea) {
-        if (Optional.ofNullable(this.businessAreaList).isEmpty())
-            this.businessAreaList = new ArrayList<>();
         this.businessAreaList.add(businessArea);
     }
 
     public void addBusinessAreaList(List<BusinessArea> businessAreaList) {
         for (BusinessArea businessArea:
-             businessAreaList) {
+                businessAreaList) {
             this.addBusinessArea(businessArea);
         }
     }
@@ -214,4 +113,74 @@ public class Company implements AbstractEntity {
         return Objects.hash(cnpj);
     }
 
+    public static class CompanyBuilder {
+
+        private Long id;
+        private final String acronym;
+        private final String name;
+        private final String cnpj;
+        private final String razaoSocial;
+        private String inscricaoEstatual;
+        private String inscricaoMunicipal;
+        private String phoneNumber;
+        private String cellPhone;
+        private String email;
+        private final Boolean isActive;
+        private Country country;
+        private List<BusinessArea> businessAreaList;
+
+        public CompanyBuilder(String acronym, String name, String cnpj, String razaoSocial, Boolean isActive) {
+            this.acronym = acronym;
+            this.name = name;
+            this.cnpj = cnpj;
+            this.razaoSocial = razaoSocial;
+            this.isActive = isActive;
+        }
+
+
+        public CompanyBuilder id (Long id) {
+            this.id = id;
+            return this;
+        }
+        public CompanyBuilder inscricaoEstatual(String inscricaoEstatual) {
+            this.inscricaoEstatual = inscricaoEstatual;
+            return this;
+        }
+
+        public CompanyBuilder inscricaoMunicipal(String inscricaoMunicipal) {
+            this.inscricaoMunicipal = inscricaoMunicipal;
+            return this;
+        }
+
+        public CompanyBuilder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public CompanyBuilder cellPhone(String cellPhone) {
+            this.cellPhone = cellPhone;
+            return this;
+        }
+
+        public CompanyBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public CompanyBuilder country(Country country) {
+            this.country = country;
+            return this;
+        }
+
+        public CompanyBuilder businessAreaList(List<BusinessArea> businessAreaList) {
+            this.businessAreaList = businessAreaList;
+            return this;
+        }
+
+        public Company build() {
+            return new Company(this);
+        }
+    }
+
 }
+

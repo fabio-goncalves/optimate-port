@@ -5,10 +5,12 @@ import br.com.optimate.manager.domain.type.PortType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
+@Data
 @SequenceGenerator(initialValue = 10, name = "seq_port_facility", sequenceName = "seq_port_facility")
 public class PortFacility implements AbstractEntity {
 
@@ -17,9 +19,11 @@ public class PortFacility implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 10)
+    @Column(name = "acronym_port", length = 10, unique = true)
     private String acronymPort;
     @NotNull
     @Size(min = 1, max = 20)
+    @Column(name = "acronym_antaq", unique = true, length = 20)
     private String acronymAntaq;
     @NotNull
     @Size(min = 1, max = 80)
@@ -30,6 +34,8 @@ public class PortFacility implements AbstractEntity {
     @OneToMany
     @JoinColumn(name="portFacility_id")
     private List<Berth> berthList;
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
     private PortType portType;
     @OneToMany
     @JoinColumn(name="operacionalArea_id")
@@ -38,8 +44,7 @@ public class PortFacility implements AbstractEntity {
     public PortFacility() {
     }
 
-    public PortFacility(Long id, String acronymPort, String acronymAntaq, String name, Boolean isActive, List<Berth> berthList, PortType portType, List<OperationalArea> operationalAreas) {
-        this.id = id;
+    public PortFacility(String acronymPort, String acronymAntaq, String name, Boolean isActive, List<Berth> berthList, PortType portType, List<OperationalArea> operationalAreas) {
         this.acronymPort = acronymPort;
         this.acronymAntaq = acronymAntaq;
         this.name = name;
@@ -52,65 +57,5 @@ public class PortFacility implements AbstractEntity {
     @Override
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAcronymPort() {
-        return acronymPort;
-    }
-
-    public void setAcronymPort(String acronymPort) {
-        this.acronymPort = acronymPort;
-    }
-
-    public String getAcronymAntaq() {
-        return acronymAntaq;
-    }
-
-    public void setAcronymAntaq(String acronymAntaq) {
-        this.acronymAntaq = acronymAntaq;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
-
-    public List<Berth> getBerthList() {
-        return berthList;
-    }
-
-    public void setBerthList(List<Berth> berthList) {
-        this.berthList = berthList;
-    }
-
-    public PortType getPortType() {
-        return portType;
-    }
-
-    public void setPortType(PortType portType) {
-        this.portType = portType;
-    }
-
-    public List<OperationalArea> getOperationalAreas() {
-        return operationalAreas;
-    }
-
-    public void setOperationalAreas(List<OperationalArea> operationalAreas) {
-        this.operationalAreas = operationalAreas;
     }
 }

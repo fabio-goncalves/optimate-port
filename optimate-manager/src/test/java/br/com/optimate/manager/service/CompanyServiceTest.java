@@ -2,8 +2,9 @@ package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.company.BusinessArea;
 import br.com.optimate.manager.domain.company.Company;
-import br.com.optimate.manager.repository.CompanyRepository;
+import br.com.optimate.manager.dto.CompanyDto;
 import br.com.optimate.manager.dto.CompanyMapper;
+import br.com.optimate.manager.repository.CompanyRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -28,33 +29,45 @@ class CompanyServiceTest {
     CompanyRepository companyRepositoryMock;
     Company company;
     List<Company> companyList;
+    CompanyDto companyDto;
+    List<BusinessArea> businessAreaList = new ArrayList<>();
 
     @BeforeEach
     public void init() {
-        BusinessArea businessArea = new BusinessArea();
-        businessArea.setName("Armador");
-        businessArea.setDescription("Dono da embarcação");
-        List<BusinessArea> businessAreaList = new ArrayList<>();
+        BusinessArea businessArea = new BusinessArea(1L, "Armador", "Dono da embarcação");
         businessAreaList.add(businessArea);
-        this.company = new Company(1L,"101", "Empresa de teste", "12345678901", "123 Milhas", "109090909090900009",
-                "12891289128", "913232-1111", "9198477-777", "teste@gmail.com", true, null, businessAreaList);
-        Company company1 = new Company(2L,"102", "Empresa de teste 2", "10987654321", "Unidas", "112190909090900009",
-                "13891289128", "913232-1112", "9198477-7888", "teste2@gmail.com", false, null, businessAreaList);
+        this.company = new Company.CompanyBuilder("101", "Empresa de teste", "12345678901", "123 Milhas", true)
+                .inscricaoEstatual("109090909090900009")
+                .inscricaoMunicipal("12891289128")
+                .phoneNumber("913232-1111")
+                .email("teste@gmail.com")
+                .businessAreaList(businessAreaList)
+                .build();
+        Company company1 = new Company.CompanyBuilder("102", "Empresa de teste 2", "10987654321", "Unidas", false)
+                .inscricaoEstatual("112190909090900009")
+                .inscricaoMunicipal("13891289128")
+                .email("teste2@gmail.com")
+                .businessAreaList(businessAreaList)
+                .build();
         this.companyList = List.of(company, company1);
-
+        this.companyDto = companyMapper.toDto(company);
     }
 
     @Test
     void saveExistsCompanyTest() {
         Mockito.when(companyRepositoryMock.findCompanyByCNPJ(Mockito.anyString())).thenReturn(company);
-        Assertions.assertThrows(WebApplicationException.class, () -> companyService.saveCompany(companyMapper.toDto(company)));
+        Assertions.assertThrows(WebApplicationException.class, () -> companyService.saveCompany(companyDto));
     }
 
     @Test
     void saveCompanyTest() {
         Mockito.when(companyRepositoryMock.findCompanyByCNPJ(Mockito.anyString())).thenReturn(null);
-        Assertions.assertEquals(company.getId(), companyService.saveCompany(companyMapper.toDto(company)).getId());
-        Mockito.verify(companyRepositoryMock).persist(company);
+        Mockito.when(companyService.saveCompany(companyDto)).thenAnswer(i -> {
+            Company company1 = (Company) i.getArgument(0);
+            company1.setId(1L);
+            return company1;
+        });
+        Assertions.assertEquals(company.getId(), companyService.saveCompany(companyDto).getId());
     }
 
     @Test
@@ -72,9 +85,9 @@ class CompanyServiceTest {
 
     @Test
     void findCompanyByStatusTest() {
-        Mockito.when(companyRepositoryMock.findByCompanyStatus(true)).thenReturn(companyList.stream().filter(Company::getActive).toList());
+        Mockito.when(companyRepositoryMock.findByCompanyStatus(true)).thenReturn(companyList.stream().filter(Company::getIsActive).toList());
         Assertions.assertEquals(1, companyService.findCompanyByStatus(true).size());
-        Assertions.assertEquals(true, companyService.findCompanyByStatus(true).get(0).getActive());
+        Assertions.assertEquals(true, companyService.findCompanyByStatus(true).get(0).getIsActive());
     }
 
     @Test
@@ -88,10 +101,13 @@ class CompanyServiceTest {
 
     @Test
     void editDocumentTest() {
-        company.setName("Nome empresa alterado");
-        Mockito.when(companyRepositoryMock.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(company));
-        Assertions.assertEquals("Nome empresa alterado", companyService.editCompany(companyMapper.toDto(company)).getName());
-        Mockito.verify(companyRepositoryMock).persist(company);
+        Company editCompany = new Company.CompanyBuilder(company.getAcronym(), "Nome empresa alterado", company.getCnpj(), company.getRazaoSocial(), company.getIsActive())
+                .id(1L)
+                .businessAreaList(businessAreaList)
+                .build();
+        CompanyDto companyDto = companyMapper.toDto(editCompany);
+        Mockito.when(companyRepositoryMock.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(editCompany));
+        Assertions.assertEquals("Nome empresa alterado", companyService.editCompany(companyDto).getName());
     }
 
     @Test

@@ -1,17 +1,21 @@
 package br.com.optimate.manager.domain.user;
 
+import br.com.optimate.manager.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.JdbcType;
+import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
 
+import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-public class Avatar {
+@Data
+public class Avatar implements AbstractEntity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,44 +44,21 @@ public class Avatar {
         this.user = user;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Serial
+    private void writeObject(java.io.ObjectOutputStream stream)
+            throws IOException {
+        stream.defaultWriteObject();
     }
 
-    public String getAvatar35() {
-        return avatar35;
-    }
-
-    public void setAvatar35(String avatar35) {
-        this.avatar35 = avatar35;
-    }
-
-    public String getAvatar70() {
-        return avatar70;
-    }
-
-    public void setAvatar70(String avatar70) {
-        this.avatar70 = avatar70;
-    }
-
-    public String getAvatar220() {
-        return avatar220;
-    }
-
-    public void setAvatar220(String avatar220) {
-        this.avatar220 = avatar220;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    @Serial
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
     }
 
     @Override

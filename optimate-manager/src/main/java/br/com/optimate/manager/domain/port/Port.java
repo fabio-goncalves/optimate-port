@@ -3,8 +3,10 @@ package br.com.optimate.manager.domain.port;
 import br.com.optimate.manager.domain.AbstractEntity;
 import br.com.optimate.manager.domain.Country;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @SequenceGenerator(initialValue = 10, name = "seq_port", sequenceName = "seq_port")
 public class Port implements AbstractEntity {
 
@@ -33,39 +35,5 @@ public class Port implements AbstractEntity {
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public String getBigram() {
-        return bigram;
-    }
-
-    public void setBigram(String bigram) {
-        this.bigram = bigram;
-    }
-
-    public String getTrigram() {
-        return trigram;
-    }
-
-    public void setTrigram(String trigram) {
-        this.trigram = trigram;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
 }

@@ -21,24 +21,24 @@ import java.util.Optional;
 @ApplicationScoped
 public class UserService implements AbstractService {
 
-    @Inject
     UserRepository userRepository;
-    @Inject
     UserMapper userMapper;
-    @Inject
     AvatarService avatarService;
-    @Inject
     AvatarRepository avatarRepository;
     private final JsonWebToken jwt;
 
     @Inject
-    public UserService(JsonWebToken jwt) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, AvatarService avatarService, AvatarRepository avatarRepository, JsonWebToken jwt) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.avatarService = avatarService;
+        this.avatarRepository = avatarRepository;
         this.jwt = jwt;
     }
 
     @Transactional
     public UserDto saveUser(UserDto userDto) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getUsername()));
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getPersonalInformation().getUsername()));
         optionalUser.ifPresent(user -> {
             throw new WebApplicationException("Username já cadastrado!", Response.Status.BAD_REQUEST);
         });
@@ -55,7 +55,7 @@ public class UserService implements AbstractService {
     }
 
     public UserDto findUserByUsername(UserDto userDto) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getUsername()));
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getPersonalInformation().getUsername()));
         User user = optionalUser.orElseThrow(() ->
                 new WebApplicationException(Response.Status.NOT_FOUND));
         return userMapper.toDto(user);
@@ -89,7 +89,7 @@ public class UserService implements AbstractService {
             User user = userMapper.toEntity(userDto);
             if (!matches(user, currentPassword))
                 throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
-            user.setPassword(BcryptUtil.bcryptHash(newPassword));
+            user.getPersonalInformation().setPassword(BcryptUtil.bcryptHash(newPassword));
         });
         return optionalUserDto.orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
     }
@@ -111,6 +111,6 @@ public class UserService implements AbstractService {
     }
 
     public boolean matches(User user, String password) {
-        return BcryptUtil.matches(password, user.getPassword());
+        return BcryptUtil.matches(password, user.getPersonalInformation().getPassword());
     }
 }

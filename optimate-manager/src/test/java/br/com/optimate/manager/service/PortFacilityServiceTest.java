@@ -29,25 +29,35 @@ class PortFacilityServiceTest {
     @InjectMock
     PortFacilityRepository portFacilityRepository;
     PortFacility portFacility;
+    PortFacilityDto portFacilityDto;
     List<PortFacility> portFacilityList;
 
     @BeforeEach
     void init() {
-        Berth berth = new Berth(1L, "101", "101Antaq", "Berço 101", 10.3,
-                13.1, 7.5, 1, 13, 2.2, null, null);
-        Berth berth1 = new Berth(2L, "102", "102Antaq", "Berço 102", 10.3,
-                13.1, 7.5, 1, 13, 2.2, null, null);
+        Berth berth = new Berth.BerthBuilder("101", "101Antaq", "Berço 101")
+                .length(10.3)
+                .airDraftMax(13.1)
+                .draftMax(7.5)
+                .initialHeader(1)
+                .finalHeader(13).build();
+        Berth berth1 = new Berth.BerthBuilder("102", "102Antaq", "Berço 102")
+                .length(10.3)
+                .airDraftMax(13.1)
+                .draftMax(7.5)
+                .initialHeader(1)
+                .finalHeader(13).build();
         List<Berth> berthList = new ArrayList<>();
         berthList.add(berth);
         berthList.add(berth1);
-        this.portFacility = new PortFacility(1L, "STM", "STM00290", "Porto de Santarém", true, berthList, PortType.PUBLIC_PIER, null);
+        this.portFacility = new PortFacility("STM", "STM00290", "Porto de Santarém", true, berthList, PortType.PUBLIC_PIER, null);
         this.portFacilityList = List.of(portFacility);
+        this.portFacilityDto = portFacilityMapper.toDto(portFacility);
     }
 
     @Test
     void savePortFacility() {
         Mockito.when(portFacilityRepository.findPortFacilityByAcronymPort(Mockito.anyString())).thenReturn(null);
-        Assertions.assertEquals(portFacility.getAcronymPort(), portFacilityService.savePortFacility(portFacilityMapper.toDto(portFacility)).getAcronymPort());
+        Assertions.assertEquals(portFacility.getAcronymPort(), portFacilityService.savePortFacility(portFacilityDto).getAcronymPort());
     }
 
     @Test
@@ -65,15 +75,23 @@ class PortFacilityServiceTest {
 
     @Test
     void findPortFacilityByName() {
+        portFacilityDto.setId(1L);
         Mockito.when(portFacilityRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.ofNullable(portFacility));
-        Assertions.assertEquals(portFacility.getName(), portFacilityService.findPortFacilityByName(portFacilityMapper.toDto(portFacility)).getName());
+        Assertions.assertEquals(portFacility.getName(), portFacilityService.findPortFacilityByName(portFacilityDto).getName());
     }
 
     @Test
     void editPortFacility() {
-        portFacility.setName("Porto de Santarém editado");
+        portFacilityDto.setId(1L);
+        portFacilityDto.setName("Porto de Santarém editado");
         Mockito.when(portFacilityRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.ofNullable(portFacility));
-        Assertions.assertEquals("Porto de Santarém editado", portFacilityService.editPortFacility(portFacilityMapper.toDto(portFacility)).getName());
+        Mockito.when(portFacilityService.editPortFacility(portFacilityDto)).thenAnswer(i -> {
+            PortFacility portFacility1 = i.getArgument(0);
+            portFacility1.setId(1L);
+            portFacility1.setName("Porto de Santarém editado");
+            return portFacility1;
+        });
+        Assertions.assertEquals("Porto de Santarém editado", portFacilityService.editPortFacility(portFacilityDto).getName());
         Mockito.verify(portFacilityRepository).persist(portFacility);
     }
 
@@ -81,7 +99,7 @@ class PortFacilityServiceTest {
     void editPortFacilityWithNullParameter() {
         portFacility.setName(null);
         Mockito.when(portFacilityRepository.findPortFacilityByName(Mockito.anyString())).thenReturn(portFacility);
-        Assertions.assertThrows(WebApplicationException.class, () -> portFacilityService.findPortFacilityByName(portFacilityMapper.toDto(portFacility)));
+        Assertions.assertThrows(WebApplicationException.class, () -> portFacilityService.findPortFacilityByName(portFacilityDto));
 
     }
 }

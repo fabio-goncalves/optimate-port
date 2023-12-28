@@ -4,10 +4,12 @@ import br.com.optimate.manager.domain.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.util.List;
 
 @Entity
+@Data
 @SequenceGenerator(initialValue = 10, name = "seq_commodity_group", sequenceName = "seq_commodity_group")
 public class ProductGroup implements AbstractEntity {
 
@@ -39,39 +41,4 @@ public class ProductGroup implements AbstractEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAcronym() {
-        return acronym;
-    }
-
-    public void setAcronym(String acronym) {
-        this.acronym = acronym;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Double getTolerance() {
-        return tolerance;
-    }
-
-    public void setTolerance(Double tolerance) {
-        this.tolerance = tolerance;
-    }
-
-    public List<Product> getProductList() {
-        return productList;
-    }
-
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
-    }
 }

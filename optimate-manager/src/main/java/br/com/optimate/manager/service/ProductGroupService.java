@@ -16,10 +16,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class ProductGroupService implements AbstractService {
 
-    @Inject
     ProductGroupRepository productGroupRepository;
-    @Inject
     ProductGroupMapper productGroupMapper;
+
+    @Inject
+    public ProductGroupService(ProductGroupRepository productGroupRepository, ProductGroupMapper productGroupMapper) {
+        this.productGroupRepository = productGroupRepository;
+        this.productGroupMapper = productGroupMapper;
+    }
 
     @Transactional
     public ProductGroupDto saveProductGroup(ProductGroupDto productGroupDto) {

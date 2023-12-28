@@ -4,8 +4,12 @@ import br.com.optimate.manager.domain.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor(force = true)
 @SequenceGenerator(initialValue = 10, name = "seq_berth", sequenceName = "seq_berth")
 public class Berth implements AbstractEntity {
 
@@ -14,42 +18,44 @@ public class Berth implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 10)
-    private String acronymBerth;
+    private final String acronymBerth;
     @NotNull
     @Size(min = 1, max = 20)
-    private String acronymBerthAntaq;
+    private final String acronymBerthAntaq;
     @NotNull
     @Size(min = 1, max = 80)
-    private String name;
-    private Double length;
-    private Double  draftMax;
-    private Double airDraftMax;
-    private Integer initialHeader;
-    private Integer finalHeader;
-    private Double tolerance;
+    private final String name;
+    private final Double length;
+    @Column(name = "draft_max")
+    private final Double  draftMax;
+    @Column(name = "air_draft_max")
+    private final Double airDraftMax;
+    @Column(name = "initial_header")
+    private final Integer initialHeader;
+    @Column(name = "final_header")
+    private final Integer finalHeader;
+    private final Double tolerance;
     @ManyToOne
     @JoinColumn(name = "mooringLocation_id")
-    private MooringLocation mooringLocation;
+    private final MooringLocation mooringLocation;
     @ManyToOne
     @JoinColumn(name = "portFacility_id")
-    private PortFacility portFacility;
+    private final PortFacility portFacility;
 
-    public Berth() {
-    }
 
-    public Berth(Long id, String acronymBerth, String acronymBerthAntaq, String name, Double length, Double draftMax, Double airDraftMax, Integer initialHeader, Integer finalHeader, Double tolerance, MooringLocation mooringLocation, PortFacility portFacility) {
-        this.id = id;
-        this.acronymBerth = acronymBerth;
-        this.acronymBerthAntaq = acronymBerthAntaq;
-        this.name = name;
-        this.length = length;
-        this.draftMax = draftMax;
-        this.airDraftMax = airDraftMax;
-        this.initialHeader = initialHeader;
-        this.finalHeader = finalHeader;
-        this.tolerance = tolerance;
-        this.mooringLocation = mooringLocation;
-        this.portFacility = portFacility;
+    private Berth(BerthBuilder berthBuilder) {
+        this.id = berthBuilder.id;
+        this.acronymBerth = berthBuilder.acronymBerth;
+        this.acronymBerthAntaq = berthBuilder.acronymBerthAntaq;
+        this.name = berthBuilder.name;
+        this.length = berthBuilder.length;
+        this.draftMax = berthBuilder.draftMax;
+        this.airDraftMax = berthBuilder.airDraftMax;
+        this.initialHeader = berthBuilder.initialHeader;
+        this.finalHeader = berthBuilder.finalHeader;
+        this.tolerance = berthBuilder.tolerance;
+        this.mooringLocation = berthBuilder.mooringLocation;
+        this.portFacility = berthBuilder.portFacility;
     }
 
     @Override
@@ -57,95 +63,74 @@ public class Berth implements AbstractEntity {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public static class BerthBuilder {
+
+        private Long id;
+        private final String acronymBerth;
+        private final String acronymBerthAntaq;
+        private final String name;
+        private Double length;
+        private Double  draftMax;
+        private Double airDraftMax;
+        private Integer initialHeader;
+        private Integer finalHeader;
+        private Double tolerance;
+        private MooringLocation mooringLocation;
+        private PortFacility portFacility;
+
+        public BerthBuilder(String acronymBerth, String acronymBerthAntaq, String name) {
+            this.acronymBerth = acronymBerth;
+            this.acronymBerthAntaq = acronymBerthAntaq;
+            this.name = name;
+        }
+
+        public BerthBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        public BerthBuilder length(Double length) {
+            this.length = length;
+            return this;
+        }
+
+        public BerthBuilder draftMax(Double draftMax) {
+            this.draftMax = draftMax;
+            return this;
+        }
+
+        public BerthBuilder airDraftMax(Double airDraftMax) {
+            this.airDraftMax = airDraftMax;
+            return this;
+        }
+
+        public BerthBuilder initialHeader(Integer initialHeader) {
+            this.initialHeader = initialHeader;
+            return this;
+        }
+
+        public BerthBuilder finalHeader(Integer finalHeader) {
+            this.finalHeader = finalHeader;
+            return this;
+        }
+
+        public BerthBuilder tolerance(Double tolerance) {
+            this.tolerance = tolerance;
+            return this;
+        }
+
+        public BerthBuilder mooringLocation(MooringLocation mooringLocation) {
+            this.mooringLocation = mooringLocation;
+            return this;
+        }
+
+        public BerthBuilder portFacility(PortFacility portFacility) {
+            this.portFacility = portFacility;
+            return this;
+        }
+
+        public Berth build() {
+            return new Berth(this);
+        }
     }
 
-    public String getAcronymBerth() {
-        return acronymBerth;
-    }
-
-    public void setAcronymBerth(String acronymBerth) {
-        this.acronymBerth = acronymBerth;
-    }
-
-    public String getAcronymBerthAntaq() {
-        return acronymBerthAntaq;
-    }
-
-    public void setAcronymBerthAntaq(String acronymBerthAntaq) {
-        this.acronymBerthAntaq = acronymBerthAntaq;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getLength() {
-        return length;
-    }
-
-    public void setLength(Double length) {
-        this.length = length;
-    }
-
-    public Double getDraftMax() {
-        return draftMax;
-    }
-
-    public void setDraftMax(Double draftMax) {
-        this.draftMax = draftMax;
-    }
-
-    public Double getAirDraftMax() {
-        return airDraftMax;
-    }
-
-    public void setAirDraftMax(Double airDraftMax) {
-        this.airDraftMax = airDraftMax;
-    }
-
-    public Integer getInitialHeader() {
-        return initialHeader;
-    }
-
-    public void setInitialHeader(Integer initialHeader) {
-        this.initialHeader = initialHeader;
-    }
-
-    public Integer getFinalHeader() {
-        return finalHeader;
-    }
-
-    public void setFinalHeader(Integer finalHeader) {
-        this.finalHeader = finalHeader;
-    }
-
-    public Double getTolerance() {
-        return tolerance;
-    }
-
-    public void setTolerance(Double tolerance) {
-        this.tolerance = tolerance;
-    }
-
-    public MooringLocation getMooringLocation() {
-        return mooringLocation;
-    }
-
-    public void setMooringLocation(MooringLocation mooringLocation) {
-        this.mooringLocation = mooringLocation;
-    }
-
-    public PortFacility getPortFacility() {
-        return portFacility;
-    }
-
-    public void setPortFacility(PortFacility portFacility) {
-        this.portFacility = portFacility;
-    }
 }

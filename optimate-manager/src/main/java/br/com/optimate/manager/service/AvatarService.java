@@ -6,7 +6,6 @@ import br.com.optimate.manager.domain.user.User;
 import br.com.optimate.manager.repository.AvatarRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,13 +15,18 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @ApplicationScoped
 public class AvatarService implements AbstractService {
 
-    @Inject
     AvatarRepository avatarRepository;
+
+    @Inject
+    public AvatarService(AvatarRepository avatarRepository) {
+        this.avatarRepository = avatarRepository;
+    }
 
     public Avatar createAvatarDefault(User user) {
         Avatar avatar = user.getAvatar();
@@ -30,9 +34,9 @@ public class AvatarService implements AbstractService {
             avatar = new Avatar(user);
         }
         String color = UtilsRandom.generateColorHex();
-        avatar.setAvatar220(getAvatarImageDefault(user.getFullName(), 220, color));
-        avatar.setAvatar70(getAvatarImageDefault(user.getFullName(), 70, color));
-        avatar.setAvatar35(getAvatarImageDefault(user.getFullName(), 35, color));
+        avatar.setAvatar220(getAvatarImageDefault(user.getPersonalInformation().getFullName(), 220, color));
+        avatar.setAvatar70(getAvatarImageDefault(user.getPersonalInformation().getFullName(), 70, color));
+        avatar.setAvatar35(getAvatarImageDefault(user.getPersonalInformation().getFullName(), 35, color));
         avatarRepository.persist(avatar);
         return user.getAvatar();
     }
@@ -61,7 +65,7 @@ public class AvatarService implements AbstractService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            String encodedImage = new String(Base64.encodeBase64(baos.toByteArray()), "UTF-8");
+            String encodedImage = new String(Base64.encodeBase64(baos.toByteArray()), StandardCharsets.UTF_8);
             return "data:image/png;base64," + encodedImage;
         } catch (IOException e) {
             e.printStackTrace();

@@ -16,11 +16,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class OperationalAreaService implements AbstractService {
 
-    @Inject
     OperationalAreaRepository operationalAreaRepository;
-    @Inject
     OperationalAreaMapper operationalAreaMapper;
 
+    @Inject
+    public OperationalAreaService(OperationalAreaRepository operationalAreaRepository, OperationalAreaMapper operationalAreaMapper) {
+        this.operationalAreaRepository = operationalAreaRepository;
+        this.operationalAreaMapper = operationalAreaMapper;
+    }
     @Transactional
     public OperationalAreaDto saveOperationalArea(OperationalAreaDto operationalAreaDto) {
         Optional<OperationalArea> operationalAreaOptional = Optional.ofNullable(operationalAreaRepository.findMooringLocationByAcronym(operationalAreaDto.getAcronym()));

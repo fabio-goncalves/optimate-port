@@ -16,11 +16,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class BusinessAreaService implements AbstractService {
 
-    @Inject
     BusinessAreaRepository businessAreaRepository;
-    @Inject
     BusinessAreaMapper businessAreaMapper;
 
+    @Inject
+    public BusinessAreaService(BusinessAreaRepository businessAreaRepository, BusinessAreaMapper businessAreaMapper) {
+        this.businessAreaRepository = businessAreaRepository;
+        this.businessAreaMapper = businessAreaMapper;
+    }
     @Transactional
     public BusinessAreaDto saveBusinessArea(BusinessAreaDto businessAreaDTO) {
         Optional.ofNullable(businessAreaRepository.findByName(businessAreaDTO.getName()))

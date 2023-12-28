@@ -16,10 +16,14 @@ import java.util.Optional;
 @ApplicationScoped
 public class PortService implements AbstractService {
 
-    @Inject
     PortRepository portRepository;
-    @Inject
     PortMapper portMapper;
+
+    @Inject
+    public PortService(PortRepository portRepository, PortMapper portMapper) {
+        this.portRepository = portRepository;
+        this.portMapper = portMapper;
+    }
 
     @Transactional
     public PortDto savePort(PortDto portDto) {

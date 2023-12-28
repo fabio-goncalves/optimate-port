@@ -1,5 +1,7 @@
 package br.com.optimate.manager.service;
 
+import br.com.optimate.manager.domain.type.StatusType;
+import br.com.optimate.manager.domain.user.PersonalInformation;
 import br.com.optimate.manager.domain.user.User;
 import br.com.optimate.manager.dto.UserDto;
 import br.com.optimate.manager.dto.UserMapper;
@@ -42,8 +44,10 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         List<String> roles = List.of("admin", "user");
-        this.user = new User(null, "Fulano", "de Tal", "fulano", "password", "fulano@test.com", true, true, roles, null, null);
-        User user1 = new User(null, "Fulano 1", "de Tal 1", "fulano1", "password1", "fulano1@test.com", true, true, roles, null, null);
+        PersonalInformation personalInformation = new PersonalInformation("Fulano", "de Tal", "fulano", "password", "fulano@test.com", true );
+        PersonalInformation personalInformation1 = new PersonalInformation("Fulano 1", "de Tal 1", "fulano1", "password1", "fulano1@test.com", true);
+        this.user = new User(personalInformation, true, StatusType.ACTIVE, roles, null, null);
+        User user1 = new User(personalInformation1, true, StatusType.ACTIVE, roles, null, null);
         this.users = List.of(user, user1);
         this.userDto = userMapper.toDto(user);
     }
@@ -57,7 +61,7 @@ class UserServiceTest {
             return user;
         });
         Assertions.assertEquals(1L, userService.saveUser(userMapper.toDto(user)).getId());
-        Assertions.assertEquals(this.user.getFirstName(), userService.saveUser(userMapper.toDto(user)).getFirstName());
+        Assertions.assertEquals(this.user.getPersonalInformation().getFirstName(), userService.saveUser(userMapper.toDto(user)).getPersonalInformation().getFirstName());
     }
 
     @Test
@@ -75,7 +79,7 @@ class UserServiceTest {
     @Test
     void findUserByUsernameTest() {
         Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(user);
-        Assertions.assertEquals("Fulano", userService.findUserByUsername(userMapper.toDto(user)).getFirstName());
+        Assertions.assertEquals("Fulano", userService.findUserByUsername(userMapper.toDto(user)).getPersonalInformation().getFirstName());
     }
 
     @Test
@@ -89,7 +93,7 @@ class UserServiceTest {
         userDto.setId(1L);
         user.setId(1L);
         Mockito.when(userRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(user));
-        Assertions.assertEquals("Fulano", userService.editUser(userDto).getFirstName());
+        Assertions.assertEquals("Fulano", userService.editUser(userDto).getPersonalInformation().getFirstName());
         Mockito.verify(userRepository).persist(user);
     }
 
@@ -110,8 +114,9 @@ class UserServiceTest {
     @Test
     void deleteNonExistentUserTest() {
         user.setId(1L);
+        Long id = user.getId();;
         Mockito.when(userRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.empty());
-        Assertions.assertThrows(WebApplicationException.class, () -> userService.deleteUser(user.getId()));
+        Assertions.assertThrows(WebApplicationException.class, () -> userService.deleteUser(id));
     }
 
     @Test
@@ -120,7 +125,7 @@ class UserServiceTest {
             @Claim(key = "email", value = "user@gmail.com")})
     void getCurrentUserTest() {
         Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(user);
-        Assertions.assertEquals(jwt.getName(), userService.getCurrentUser().getUsername());
+        Assertions.assertEquals(jwt.getName(), userService.getCurrentUser().getPersonalInformation().getUsername());
     }
 
     @Test

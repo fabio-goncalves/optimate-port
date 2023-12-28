@@ -16,10 +16,15 @@ import java.util.Optional;
 @ApplicationScoped
 public class PortFacilityService implements AbstractService {
 
-    @Inject
+
     PortFacilityRepository portFacilityRepository;
-    @Inject
     PortFacilityMapper portFacilityMapper;
+
+    @Inject
+    public PortFacilityService(PortFacilityRepository portFacilityRepository, PortFacilityMapper portFacilityMapper){
+        this.portFacilityRepository = portFacilityRepository;
+        this.portFacilityMapper = portFacilityMapper;
+    }
 
     @Transactional
     public PortFacilityDto savePortFacility(PortFacilityDto portFacilityDto) {
