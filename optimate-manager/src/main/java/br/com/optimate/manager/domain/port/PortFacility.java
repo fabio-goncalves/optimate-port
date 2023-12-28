@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -29,7 +30,7 @@ public class PortFacility implements AbstractEntity {
     @Size(min = 1, max = 80)
     private String name;
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
     @OneToMany
     @JoinColumn(name="portFacility_id")
@@ -57,5 +58,28 @@ public class PortFacility implements AbstractEntity {
     @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "PortFacility{" +
+                "id=" + id +
+                ", acronymPort='" + acronymPort + '\'' +
+                ", acronymAntaq='" + acronymAntaq + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PortFacility that = (PortFacility) o;
+        return Objects.equals(acronymPort, that.acronymPort);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(acronymPort);
     }
 }

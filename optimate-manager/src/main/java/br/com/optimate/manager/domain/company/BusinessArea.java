@@ -17,7 +17,7 @@ public class BusinessArea implements AbstractEntity {
     @NotNull
     @Size(min = 1, max = 80)
     private String name;
-    @Size(max = 250)
+    @Size(max = 150)
     private String description;
 
     public BusinessArea() {    }

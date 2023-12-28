@@ -24,30 +24,37 @@ public class Company implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 20)
+    @Column(unique = true, nullable = false)
     private final String acronym;
     @NotNull
     @Size(min = 1, max = 80)
     private final String name;
     @NotNull
     @Size(min = 1, max = 80)
+    @Column(unique = true, nullable = false)
     private final String cnpj;
     @NotNull
     @Size(min = 1, max = 80)
+    @Column(name = "razao_social", nullable = false)
     private final String razaoSocial;
     @Size(max = 30)
+    @Column(name = "inscricao_estatual")
     private final String inscricaoEstatual;
     @Size(max = 30)
+    @Column(name = "inscricao_municipal")
     private final String inscricaoMunicipal;
     @Size(max = 30)
+    @Column(name = "phone_number")
     private final String phoneNumber;
     @Size(max = 30)
+    @Column(name = "cell_phone")
     private final String cellPhone;
     @Email
     @Size(max = 100)
-    @Column(length = 100, unique = true, nullable = false)
+    @Column(length = 100, unique = true)
     private final String email;
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private final Boolean isActive;
     @ManyToOne
     @JoinColumn(name = "country_id")

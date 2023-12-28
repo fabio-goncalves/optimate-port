@@ -20,7 +20,8 @@ public class MooringLocation implements AbstractEntity {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_mooring")
     private Long id;
     @NotNull
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 20)
+    @Column(name = "acronym_mooring", unique = true)
     private String acronymMooring;
     @Size(max = 150)
     private String description;
@@ -42,8 +43,25 @@ public class MooringLocation implements AbstractEntity {
         return id;
     }
 
-    public List<Berth> getBerthList() {
-        return berthList;
+    @Override
+    public String toString() {
+        return "MooringLocation{" +
+                "id=" + id +
+                ", acronymMooring='" + acronymMooring + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MooringLocation that = (MooringLocation) o;
+        return Objects.equals(acronymMooring, that.acronymMooring);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(acronymMooring);
     }
 
     public void addBerth(Berth berth) {
@@ -59,16 +77,4 @@ public class MooringLocation implements AbstractEntity {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MooringLocation mooringLocation = (MooringLocation) o;
-        return Objects.equals(acronymMooring, mooringLocation.acronymMooring);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(acronymMooring);
-    }
 }

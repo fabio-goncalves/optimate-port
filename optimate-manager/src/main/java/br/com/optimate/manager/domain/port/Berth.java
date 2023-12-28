@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Data
 @NoArgsConstructor(force = true)
@@ -18,9 +20,11 @@ public class Berth implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 10)
+    @Column(name = "acronym_berth", unique = true)
     private final String acronymBerth;
     @NotNull
     @Size(min = 1, max = 20)
+    @Column(name = "acronymBerth_antaq", unique = true)
     private final String acronymBerthAntaq;
     @NotNull
     @Size(min = 1, max = 80)
@@ -61,6 +65,29 @@ public class Berth implements AbstractEntity {
     @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Berth{" +
+                "id=" + id +
+                ", acronymBerth='" + acronymBerth + '\'' +
+                ", acronymBerthAntaq='" + acronymBerthAntaq + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Berth berth = (Berth) o;
+        return Objects.equals(id, berth.id) && Objects.equals(acronymBerth, berth.acronymBerth) && Objects.equals(acronymBerthAntaq, berth.acronymBerthAntaq);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, acronymBerth, acronymBerthAntaq);
     }
 
     public static class BerthBuilder {

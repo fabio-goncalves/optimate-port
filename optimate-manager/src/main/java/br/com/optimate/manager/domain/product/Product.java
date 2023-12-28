@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Entity
 @Data
 @SequenceGenerator(initialValue = 10, name = "seq_commodity", sequenceName = "seq_commodity")
@@ -16,6 +18,7 @@ public class Product implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 10)
+    @Column(unique = true)
     private String acronym;
     @Size(max = 150)
     private String description;
@@ -23,7 +26,7 @@ public class Product implements AbstractEntity {
     @JoinColumn(name = "productGroup_id")
     private ProductGroup productGroup;
     @NotNull
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
     public Product() {
@@ -38,8 +41,25 @@ public class Product implements AbstractEntity {
     }
 
     @Override
-    public Long getId() {
-        return id;
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", acronym='" + acronym + '\'' +
+                ", description='" + description + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(acronym, product.acronym);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(acronym);
+    }
 }

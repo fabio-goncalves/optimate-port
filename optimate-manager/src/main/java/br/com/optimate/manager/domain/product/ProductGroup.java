@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -18,6 +19,7 @@ public class ProductGroup implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 10)
+    @Column(unique = true)
     private String acronym;
     @Size(max = 150)
     private String description;
@@ -41,4 +43,24 @@ public class ProductGroup implements AbstractEntity {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return "ProductGroup{" +
+                "id=" + id +
+                ", acronym='" + acronym + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductGroup that = (ProductGroup) o;
+        return Objects.equals(acronym, that.acronym);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(acronym);
+    }
 }
