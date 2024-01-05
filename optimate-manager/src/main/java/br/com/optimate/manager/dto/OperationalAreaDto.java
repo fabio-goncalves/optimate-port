@@ -10,7 +10,6 @@ public class OperationalAreaDto {
     private Long id;
     private String acronym;
     private String acronymAntaq;
-    private String name;
     private String description;
     private PortFacility portFacility;
 

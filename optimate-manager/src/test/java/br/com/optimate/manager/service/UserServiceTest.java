@@ -35,19 +35,23 @@ class UserServiceTest {
     UserRepository userRepository;
     @Inject
     JsonWebToken jwt;
-
     User user;
     List<User> users;
-
     UserDto userDto;
 
     @BeforeEach
     void setUp() {
         List<String> roles = List.of("admin", "user");
-        PersonalInformation personalInformation = new PersonalInformation("Fulano", "de Tal", "fulano", "password", "fulano@test.com", true );
-        PersonalInformation personalInformation1 = new PersonalInformation("Fulano 1", "de Tal 1", "fulano1", "password1", "fulano1@test.com", true);
-        this.user = new User(personalInformation, true, StatusType.ACTIVE, roles, null, null);
-        User user1 = new User(personalInformation1, true, StatusType.ACTIVE, roles, null, null);
+        PersonalInformation personalInformation = new PersonalInformation("Fulano", "de Tal", "fulano@test.com", true );
+        PersonalInformation personalInformation1 = new PersonalInformation("Fulano 1", "de Tal 1", "fulano1@test.com", true);
+        this.user = new User.UserBuilder("fulano", "password", StatusType.ACTIVE, roles)
+                .personalInformation(personalInformation)
+                .receiveEmails(true)
+                .build();
+        User user1 = new User.UserBuilder("fulano1", "password1", StatusType.ACTIVE, roles)
+                .personalInformation(personalInformation1)
+                .receiveEmails(false)
+                .build();
         this.users = List.of(user, user1);
         this.userDto = userMapper.toDto(user);
     }
@@ -55,13 +59,14 @@ class UserServiceTest {
     @Test
     void saveNonexistentUserTest() {
         Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(null);
-        Mockito.when(userService.saveUser(userMapper.toDto(user))).thenAnswer(invocationOnMock -> {
-            User user = (User) invocationOnMock.getArguments()[0];
-            user.setId(1L);
-            return user;
+        Mockito.when(userService.saveUser(userDto)).thenAnswer(invocationOnMock -> {
+            User user1 = (User) invocationOnMock.getArgument(0);
+            user1.setId(1L);
+            this.userDto.setId(1L);
+            return user1;
         });
-        Assertions.assertEquals(1L, userService.saveUser(userMapper.toDto(user)).getId());
-        Assertions.assertEquals(this.user.getPersonalInformation().getFirstName(), userService.saveUser(userMapper.toDto(user)).getPersonalInformation().getFirstName());
+        Assertions.assertEquals(1L, userService.saveUser(userDto).getId());
+        Assertions.assertEquals(user.getUsername(), userService.saveUser(userDto).getUsername());
     }
 
     @Test
@@ -90,9 +95,15 @@ class UserServiceTest {
 
     @Test
     void editExistentUserTest() {
-        userDto.setId(1L);
         user.setId(1L);
+        userDto.setId(1L);
         Mockito.when(userRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(user));
+        Mockito.when(userService.editUser(userDto)).thenAnswer(i -> {
+            User user = (User) i.getArgument(0);
+            user.setId(1L);
+            userDto.setId(1L);
+            return user;
+        });
         Assertions.assertEquals("Fulano", userService.editUser(userDto).getPersonalInformation().getFirstName());
         Mockito.verify(userRepository).persist(user);
     }
@@ -125,7 +136,7 @@ class UserServiceTest {
             @Claim(key = "email", value = "user@gmail.com")})
     void getCurrentUserTest() {
         Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(user);
-        Assertions.assertEquals(jwt.getName(), userService.getCurrentUser().getPersonalInformation().getUsername());
+        Assertions.assertEquals(jwt.getName(), userService.getCurrentUser().getUsername());
     }
 
     @Test

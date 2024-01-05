@@ -1,6 +1,7 @@
 package br.com.optimate.manager.dto;
 
 import br.com.optimate.manager.domain.port.Berth;
+import br.com.optimate.manager.domain.port.MooringLocation;
 import br.com.optimate.manager.domain.port.OperationalArea;
 import br.com.optimate.manager.domain.type.PortType;
 import lombok.Data;

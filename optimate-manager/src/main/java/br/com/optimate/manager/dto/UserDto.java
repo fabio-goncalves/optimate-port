@@ -22,8 +22,9 @@ public class UserDto {
     private Long id;
     private PersonalInformation personalInformation;
     private StatusType status;
-    @NotNull
     private boolean receiveEmails = false;
+    private String username;
+    private String password;
     private List<String> roles;
     private Avatar avatar;
     private List<Company> companyList;

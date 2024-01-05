@@ -1,11 +1,12 @@
 package br.com.optimate.manager.service;
 
 import br.com.optimate.manager.domain.port.Berth;
+import br.com.optimate.manager.domain.port.OperationalArea;
 import br.com.optimate.manager.domain.port.PortFacility;
 import br.com.optimate.manager.domain.type.PortType;
-import br.com.optimate.manager.repository.PortFacilityRepository;
 import br.com.optimate.manager.dto.PortFacilityDto;
 import br.com.optimate.manager.dto.PortFacilityMapper;
+import br.com.optimate.manager.repository.PortFacilityRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -49,7 +50,9 @@ class PortFacilityServiceTest {
         List<Berth> berthList = new ArrayList<>();
         berthList.add(berth);
         berthList.add(berth1);
-        this.portFacility = new PortFacility("STM", "STM00290", "Porto de Santarém", true, berthList, PortType.PUBLIC_PIER, null);
+        OperationalArea operationalArea = new OperationalArea(1L, "BEL - 01", "BRBELARE0001", "Terminal de Múltiplo Uso - 01 - BEL", null);
+        List<OperationalArea> operationalAreaList = List.of(operationalArea);
+        this.portFacility = new PortFacility("STM", "STM00290", "Porto de Santarém", true, berthList, PortType.PUBLIC_PIER, operationalAreaList);
         this.portFacilityList = List.of(portFacility);
         this.portFacilityDto = portFacilityMapper.toDto(portFacility);
     }

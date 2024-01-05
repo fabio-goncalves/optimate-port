@@ -33,9 +33,9 @@ class OperationalAreaServiceTest {
 
     @BeforeEach
     void init() {
-        this.operationalArea = new OperationalArea(1L, "AREA01", "BRSTMARE0001", "Área 01",
+        this.operationalArea = new OperationalArea(1L, "AREA01", "BRSTMARE0001",
                 "Terminal de Múltiplo Uso 1", null);
-        OperationalArea operationalArea1 = new OperationalArea(1L, "AREA14", "BRSTMARE0002", "Área 14", "Terminal de passageiros", null);
+        OperationalArea operationalArea1 = new OperationalArea(1L, "AREA14", "BRSTMARE0002", "Terminal de passageiros", null);
         this.operationalAreaList = List.of(operationalArea, operationalArea1);
         this.operationalAreaDto = operationalAreaMapper.toDto(operationalArea);
     }

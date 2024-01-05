@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "product_group")
 @Data
-@SequenceGenerator(initialValue = 10, name = "seq_commodity_group", sequenceName = "seq_commodity_group")
+@SequenceGenerator(initialValue = 120, name = "seq_commodity_group", sequenceName = "seq_commodity_group")
 public class ProductGroup implements AbstractEntity {
 
     @Id

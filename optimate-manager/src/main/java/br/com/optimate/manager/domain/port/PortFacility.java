@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "port_facility")
 @Data
 @SequenceGenerator(initialValue = 10, name = "seq_port_facility", sequenceName = "seq_port_facility")
 public class PortFacility implements AbstractEntity {
@@ -24,7 +25,7 @@ public class PortFacility implements AbstractEntity {
     private String acronymPort;
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "acronym_antaq", unique = true, length = 20)
+    @Column(name = "acronym_port_antaq", unique = true, length = 20)
     private String acronymAntaq;
     @NotNull
     @Size(min = 1, max = 80)
@@ -33,19 +34,20 @@ public class PortFacility implements AbstractEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
     @OneToMany
-    @JoinColumn(name="portFacility_id")
+    @JoinColumn(name="port_facility_id")
     private List<Berth> berthList;
     @NotNull
     @Enumerated(EnumType.ORDINAL)
+    @Column(name = "port_type")
     private PortType portType;
     @OneToMany
-    @JoinColumn(name="operacionalArea_id")
+    @JoinColumn(name="port_facility_id")
     private List<OperationalArea> operationalAreas;
 
     public PortFacility() {
     }
 
-    public PortFacility(String acronymPort, String acronymAntaq, String name, Boolean isActive, List<Berth> berthList, PortType portType, List<OperationalArea> operationalAreas) {
+    public PortFacility(String acronymPort, String acronymAntaq, String name, Boolean isActive,List<Berth> berthList, PortType portType, List<OperationalArea> operationalAreas) {
         this.acronymPort = acronymPort;
         this.acronymAntaq = acronymAntaq;
         this.name = name;

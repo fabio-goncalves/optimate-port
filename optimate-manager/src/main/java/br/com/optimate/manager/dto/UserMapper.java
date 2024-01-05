@@ -8,10 +8,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import java.util.List;
 
 @Mapper(componentModel = "cdi",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = PersonalInformationMapper.class)
 public interface UserMapper {
-
-    @Mapping(target = "id", source = "id")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "personalInformation", source = "personalInformation")
     User toEntity(UserDto userDto);
 
     @Mapping(target = "id", source = "id")

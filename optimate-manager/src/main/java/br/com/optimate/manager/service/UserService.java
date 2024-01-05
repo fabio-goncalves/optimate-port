@@ -38,7 +38,7 @@ public class UserService implements AbstractService {
 
     @Transactional
     public UserDto saveUser(UserDto userDto) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getPersonalInformation().getUsername()));
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getUsername()));
         optionalUser.ifPresent(user -> {
             throw new WebApplicationException("Username já cadastrado!", Response.Status.BAD_REQUEST);
         });
@@ -55,7 +55,7 @@ public class UserService implements AbstractService {
     }
 
     public UserDto findUserByUsername(UserDto userDto) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getPersonalInformation().getUsername()));
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getUsername()));
         User user = optionalUser.orElseThrow(() ->
                 new WebApplicationException(Response.Status.NOT_FOUND));
         return userMapper.toDto(user);
@@ -89,7 +89,8 @@ public class UserService implements AbstractService {
             User user = userMapper.toEntity(userDto);
             if (!matches(user, currentPassword))
                 throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
-            user.getPersonalInformation().setPassword(BcryptUtil.bcryptHash(newPassword));
+            userDto.setPassword(BcryptUtil.bcryptHash(newPassword));
+            userMapper.toDto(user);
         });
         return optionalUserDto.orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
     }
@@ -111,6 +112,6 @@ public class UserService implements AbstractService {
     }
 
     public boolean matches(User user, String password) {
-        return BcryptUtil.matches(password, user.getPersonalInformation().getPassword());
+        return BcryptUtil.matches(password, user.getPassword());
     }
 }

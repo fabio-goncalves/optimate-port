@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
+@Table(name = "business_area")
 @Data
 @SequenceGenerator(initialValue = 10, name = "seq_bussiness_area", sequenceName = "bussiness_area")
 public class BusinessArea implements AbstractEntity {

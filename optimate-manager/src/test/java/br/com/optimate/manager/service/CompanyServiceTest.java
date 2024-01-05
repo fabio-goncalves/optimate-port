@@ -67,7 +67,9 @@ class CompanyServiceTest {
             company1.setId(1L);
             return company1;
         });
+        Company teste = companyMapper.toEntity(companyDto);
         Assertions.assertEquals(company.getId(), companyService.saveCompany(companyDto).getId());
+        Assertions.assertEquals(company.getName(), companyService.saveCompany(companyDto).getName());
     }
 
     @Test

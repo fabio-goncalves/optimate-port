@@ -5,14 +5,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @Data
-@NoArgsConstructor(force = true)
-@SequenceGenerator(initialValue = 10, name = "seq_berth", sequenceName = "seq_berth")
+@SequenceGenerator(initialValue = 100, name = "seq_berth", sequenceName = "seq_berth")
 public class Berth implements AbstractEntity {
 
     @Id
@@ -20,32 +18,31 @@ public class Berth implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 10)
-    @Column(name = "acronym_berth", unique = true)
-    private final String acronymBerth;
+    @Column(name = "acronym_berth")
+    private String acronymBerth;
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "acronymBerth_antaq", unique = true)
-    private final String acronymBerthAntaq;
+    @Column(name = "acronym_berth_antaq", unique = true)
+    private String acronymBerthAntaq;
     @NotNull
     @Size(min = 1, max = 80)
-    private final String name;
-    private final Double length;
+    private String name;
+    private Double length;
     @Column(name = "draft_max")
-    private final Double  draftMax;
+    private Double  draftMax;
     @Column(name = "air_draft_max")
-    private final Double airDraftMax;
+    private Double airDraftMax;
     @Column(name = "initial_header")
-    private final Integer initialHeader;
+    private Integer initialHeader;
     @Column(name = "final_header")
-    private final Integer finalHeader;
-    private final Double tolerance;
+    private Integer finalHeader;
+    private Double tolerance;
     @ManyToOne
     @JoinColumn(name = "mooringLocation_id")
-    private final MooringLocation mooringLocation;
+    private MooringLocation mooringLocation;
     @ManyToOne
-    @JoinColumn(name = "portFacility_id")
-    private final PortFacility portFacility;
-
+    @JoinColumn(name = "port_facility_id")
+    private PortFacility portFacility;
 
     private Berth(BerthBuilder berthBuilder) {
         this.id = berthBuilder.id;
@@ -60,6 +57,9 @@ public class Berth implements AbstractEntity {
         this.tolerance = berthBuilder.tolerance;
         this.mooringLocation = berthBuilder.mooringLocation;
         this.portFacility = berthBuilder.portFacility;
+    }
+
+    public Berth() {
     }
 
     @Override
@@ -151,9 +151,10 @@ public class Berth implements AbstractEntity {
         }
 
         public BerthBuilder portFacility(PortFacility portFacility) {
-            this.portFacility = portFacility;
-            return this;
+           this.portFacility = portFacility;
+           return this;
         }
+
 
         public Berth build() {
             return new Berth(this);

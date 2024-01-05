@@ -12,8 +12,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Entity
+@Table(name = "mooring_location")
 @Data
-@SequenceGenerator(initialValue = 10, name = "seq_mooring", sequenceName = "seq_mooring")
+@SequenceGenerator(initialValue = 60, name = "seq_mooring", sequenceName = "seq_mooring")
 public class MooringLocation implements AbstractEntity {
 
     @Id
@@ -23,6 +24,8 @@ public class MooringLocation implements AbstractEntity {
     @Size(min = 1, max = 20)
     @Column(name = "acronym_mooring", unique = true)
     private String acronymMooring;
+    @Size(max = 80)
+    private String name;
     @Size(max = 150)
     private String description;
     @OneToMany(mappedBy = "mooringLocation")
@@ -31,9 +34,10 @@ public class MooringLocation implements AbstractEntity {
     public MooringLocation() {
     }
 
-    public MooringLocation(Long id, String acronymMooring, String description, List<Berth> berthList) {
+    public MooringLocation(Long id, String name, String acronymMooring, String description, List<Berth> berthList) {
         this.id = id;
         this.acronymMooring = acronymMooring;
+        this.name = name;
         this.description = description;
         this.berthList = berthList;
     }

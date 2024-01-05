@@ -7,11 +7,12 @@ import lombok.Data;
 
 @Entity
 @Data
+@SequenceGenerator(initialValue = 250, name = "seq_country", sequenceName = "seq_country")
 public class Country implements AbstractEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_country")
+    private Long id;
     @NotNull
     @Size(min = 1, max = 80)
     private String name;

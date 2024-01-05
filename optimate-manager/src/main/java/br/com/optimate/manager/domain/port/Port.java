@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Data
-@SequenceGenerator(initialValue = 10, name = "seq_port", sequenceName = "seq_port")
+@SequenceGenerator(initialValue = 25400, name = "seq_port", sequenceName = "seq_port")
 public class Port implements AbstractEntity {
 
     @Id

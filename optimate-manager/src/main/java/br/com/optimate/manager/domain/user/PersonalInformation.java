@@ -20,7 +20,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "personal_information")
 @Data
-public class PersonalInformation implements AbstractEntity, Serializable {
+public class PersonalInformation implements AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,14 +31,6 @@ public class PersonalInformation implements AbstractEntity, Serializable {
     @Size(max = 50)
     @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
-    @Column(unique = true)
-    @Size(min = 6, max = 30)
-    @Username
-    private String username;
-    @Password
-    @Size(min = 60, max = 60)
-    @Column(name = "password_hash", length = 60)
-    private String password;
     @Email
     @Size(max = 100)
     @Column(length = 100, unique = true, nullable = false)
@@ -46,7 +38,6 @@ public class PersonalInformation implements AbstractEntity, Serializable {
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
-
     @JsonIgnore
     @NotNull
     @OneToOne
@@ -54,11 +45,9 @@ public class PersonalInformation implements AbstractEntity, Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    public PersonalInformation(String firstName, String lastName, String username, String password, String email, boolean activated) {
+    public PersonalInformation(String firstName, String lastName, String email, boolean activated) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
-        this.password = password;
         this.email = email;
         this.activated = activated;
     }

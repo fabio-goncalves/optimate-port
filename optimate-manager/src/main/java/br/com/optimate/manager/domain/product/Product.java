@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Data
-@SequenceGenerator(initialValue = 10, name = "seq_commodity", sequenceName = "seq_commodity")
+@SequenceGenerator(initialValue = 1500, name = "seq_commodity", sequenceName = "seq_commodity")
 public class Product implements AbstractEntity {
 
     @Id
@@ -23,7 +23,7 @@ public class Product implements AbstractEntity {
     @Size(max = 150)
     private String description;
     @ManyToOne
-    @JoinColumn(name = "productGroup_id")
+    @JoinColumn(name = "product_group_id")
     private ProductGroup productGroup;
     @NotNull
     @Column(name = "is_active", nullable = false)

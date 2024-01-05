@@ -19,5 +19,4 @@ public class BerthDto {
     private Double tolerance;
     private MooringLocation mooringLocation;
     private PortFacility portFacility;
-
 }

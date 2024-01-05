@@ -9,6 +9,7 @@ import lombok.Data;
 import java.util.Objects;
 
 @Entity
+@Table(name = "operational_area")
 @Data
 @SequenceGenerator(initialValue = 10, name = "seq_area", sequenceName = "seq_area")
 public class OperationalArea implements AbstractEntity {
@@ -24,21 +25,19 @@ public class OperationalArea implements AbstractEntity {
     @Size(min = 1, max = 20)
     @Column(name = "acronym_antaq", unique = true)
     private String acronymAntaq;
-    @Size(max = 100)
-    private String name;
     @Size(max = 150)
     private String description;
     @ManyToOne
+    @JoinColumn(name = "port_facility_id")
     private PortFacility portFacility;
 
     public OperationalArea() {
     }
 
-    public OperationalArea(Long id, String acronym, String acronymAntaq, String name, String description, PortFacility portFacility) {
+    public OperationalArea(Long id, String acronym, String acronymAntaq, String description, PortFacility portFacility) {
         this.id = id;
         this.acronym = acronym;
         this.acronymAntaq = acronymAntaq;
-        this.name = name;
         this.description = description;
         this.portFacility = portFacility;
     }

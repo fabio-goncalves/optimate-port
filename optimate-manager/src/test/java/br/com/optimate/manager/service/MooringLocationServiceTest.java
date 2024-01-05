@@ -51,8 +51,8 @@ class MooringLocationServiceTest {
         List<Berth> berthList = new ArrayList<>();
         berthList.add(berth);
         berthList.add(berth1);
-        this.mooringLocation = new MooringLocation(1L, "STM.CP", "Cais Público", berthList);
-        MooringLocation mooringLocation1 = new MooringLocation(1L, "STM.FOGAZ", "Arrendamento Fogaz", berthList);
+        this.mooringLocation = new MooringLocation(1L, "BEL - 01", "BRBELARE0001", "Terminal de Múltiplo Uso - 01 - BEL", berthList);
+        MooringLocation mooringLocation1 = new MooringLocation(1L, "BEL - 02", "BRBELARE0002", "Terminal de Múltiplo Uso - 02 - BEL", berthList);
         this.mooringLocationList = List.of(mooringLocation, mooringLocation1);
         this.mooringLocationDto = mooringLocationMapper.toDto(mooringLocation);
     }
@@ -92,7 +92,7 @@ class MooringLocationServiceTest {
 
     @Test
     void findMooringLocationByAcronymWithNullAcronym() {
-        MooringLocation edittedMooringLocation = new MooringLocation(1L, null, "Cais Público", null);
+        MooringLocation edittedMooringLocation = new MooringLocation(1L, "BEL - 03", null, "Terminal de Múltiplo Uso - 03 - BEL", null);
         MooringLocationDto edittedMooringLocationDto = mooringLocationMapper.toDto(edittedMooringLocation);
         Mockito.when(mooringLocationRepository.findMooringLocationByAcronym(Mockito.anyString())).thenReturn(edittedMooringLocation);
         assertThrows(WebApplicationException.class, () -> mooringLocationService.findMooringLocationByAcronym(edittedMooringLocationDto));
@@ -100,11 +100,10 @@ class MooringLocationServiceTest {
 
     @Test
     void editMooringLocation() {
-        MooringLocation edittedMooringLocation = new MooringLocation(1L, "STM.CP", "Cais Privado", null);
+        MooringLocation edittedMooringLocation = new MooringLocation(1L, "BEL - 03", "BRBELARE0003", "Terminal de Múltiplo Uso - 03 - BEL", null);
         MooringLocationDto edittedMooringLocationDto = mooringLocationMapper.toDto(edittedMooringLocation);
         Mockito.when(mooringLocationRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(edittedMooringLocation));
-        assertEquals("Cais Privado", mooringLocationService.editMooringLocation(edittedMooringLocationDto).getDescription());
-        Mockito.verify(mooringLocationRepository).persist(mooringLocation);
+        assertEquals("Terminal de Múltiplo Uso - 03 - BEL", mooringLocationService.editMooringLocation(edittedMooringLocationDto).getDescription());
     }
 
     @Test

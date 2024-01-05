@@ -27,10 +27,10 @@ public class LoginService implements AbstractService {
                 new WebApplicationException(Response.ok(new MessageResponse("Usuário não econtrado!")).status(Response.Status.NOT_FOUND).build()));
         if (!matches(userFound, loginDto.getPassword()))
             throw new WebApplicationException(Response.ok(new MessageResponse("Credenciais inválidas!")).status(Response.Status.UNAUTHORIZED).build());
-        loginDto.setToken(TokenGenerator.generateToken(userFound.getUsername(), userFound.getFirstName(), userFound.getRoles()));
+        loginDto.setToken(TokenGenerator.generateToken(userFound.getUsername(), userFound.getUsername(), userFound.getRoles()));
         loginDto.setRoles(userFound.getRoles());
         loginDto.setAvatar(userFound.getAvatar().getAvatar220());
-        loginDto.setName(userFound.getFullName());
+        loginDto.setName(userFound.getUsername());
         loginDto.setUsername(userFound.getUsername());
         return loginDto;
     }

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.Objects;
 
 @Entity
 @Data
-@NoArgsConstructor(force = true)
 @SequenceGenerator(initialValue = 10, name = "seq_company", sequenceName = "seq_company")
 public class Company implements AbstractEntity {
 
@@ -25,45 +23,45 @@ public class Company implements AbstractEntity {
     @NotNull
     @Size(min = 1, max = 20)
     @Column(unique = true, nullable = false)
-    private final String acronym;
+    private String acronym;
     @NotNull
     @Size(min = 1, max = 80)
-    private final String name;
+    private String name;
     @NotNull
     @Size(min = 1, max = 80)
     @Column(unique = true, nullable = false)
-    private final String cnpj;
+    private String cnpj;
     @NotNull
     @Size(min = 1, max = 80)
     @Column(name = "razao_social", nullable = false)
-    private final String razaoSocial;
+    private String razaoSocial;
     @Size(max = 30)
     @Column(name = "inscricao_estatual")
-    private final String inscricaoEstatual;
+    private String inscricaoEstatual;
     @Size(max = 30)
     @Column(name = "inscricao_municipal")
-    private final String inscricaoMunicipal;
+    private String inscricaoMunicipal;
     @Size(max = 30)
     @Column(name = "phone_number")
-    private final String phoneNumber;
+    private String phoneNumber;
     @Size(max = 30)
     @Column(name = "cell_phone")
-    private final String cellPhone;
+    private String cellPhone;
     @Email
     @Size(max = 100)
     @Column(length = 100, unique = true)
-    private final String email;
+    private String email;
     @NotNull
     @Column(name = "is_active", nullable = false)
-    private final Boolean isActive;
+    private Boolean isActive;
     @ManyToOne
     @JoinColumn(name = "country_id")
-    private final Country country;
+    private Country country;
     @ManyToMany
     @JoinTable(name = "company_business",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "business_id"))
-    private final List<BusinessArea> businessAreaList;
+    private List<BusinessArea> businessAreaList;
 
 
     private Company(CompanyBuilder companyBuilder) {
@@ -80,6 +78,10 @@ public class Company implements AbstractEntity {
         this.isActive = companyBuilder.isActive;
         this.country = companyBuilder.country;
         this.businessAreaList = companyBuilder.businessAreaList.isEmpty() ? new ArrayList<>(): companyBuilder.businessAreaList;
+    }
+
+    public Company() {
+
     }
 
     @Override
