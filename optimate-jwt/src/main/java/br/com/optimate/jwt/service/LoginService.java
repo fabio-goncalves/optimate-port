@@ -17,8 +17,13 @@ import java.util.Optional;
 @ApplicationScoped
 public class LoginService implements AbstractService {
 
-    @Inject
+
     UserRepository userRepository;
+
+    @Inject
+    LoginService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public LoginDto authenticate(LoginDto loginDto) {

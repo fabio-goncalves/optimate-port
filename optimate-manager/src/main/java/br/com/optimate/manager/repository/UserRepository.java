@@ -10,4 +10,8 @@ public class UserRepository implements PanacheRepository<User> {
     public User findUserByUsername(String username) {
         return find("username", username).firstResult();
     }
+
+    public boolean userIsNotAlreadyRegistry(String username) {
+        return list("username", username).isEmpty();
+    }
 }

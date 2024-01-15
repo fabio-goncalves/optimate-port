@@ -1,5 +1,7 @@
 package br.com.optimate.manager.service;
 
+import br.com.optimate.manager.domain.company.BusinessArea;
+import br.com.optimate.manager.domain.company.Company;
 import br.com.optimate.manager.domain.type.StatusType;
 import br.com.optimate.manager.domain.user.PersonalInformation;
 import br.com.optimate.manager.domain.user.User;
@@ -27,10 +29,8 @@ class UserServiceTest {
 
     @Inject
     UserService userService;
-
     @Inject
     UserMapper userMapper;
-
     @InjectMock
     UserRepository userRepository;
     @Inject
@@ -41,12 +41,29 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
+        BusinessArea businessArea = new BusinessArea(1L, "Armador", "Dono da embarcação");
+        List<BusinessArea> businessAreaList = List.of(businessArea);
+         Company company = new Company.CompanyBuilder("101", "Empresa de teste", "12345678901", "123 Milhas", true)
+                .inscricaoEstatual("109090909090900009")
+                .inscricaoMunicipal("12891289128")
+                .phoneNumber("913232-1111")
+                .email("teste@gmail.com")
+                .businessAreaList(businessAreaList)
+                .build();
+        Company company1 = new Company.CompanyBuilder("102", "Empresa de teste 2", "10987654321", "Unidas", false)
+                .inscricaoEstatual("112190909090900009")
+                .inscricaoMunicipal("13891289128")
+                .email("teste2@gmail.com")
+                .businessAreaList(businessAreaList)
+                .build();
+        List<Company> companyList = List.of(company, company1);
         List<String> roles = List.of("admin", "user");
         PersonalInformation personalInformation = new PersonalInformation("Fulano", "de Tal", "fulano@test.com", true );
         PersonalInformation personalInformation1 = new PersonalInformation("Fulano 1", "de Tal 1", "fulano1@test.com", true);
         this.user = new User.UserBuilder("fulano", "password", StatusType.ACTIVE, roles)
                 .personalInformation(personalInformation)
                 .receiveEmails(true)
+                .companyList(companyList)
                 .build();
         User user1 = new User.UserBuilder("fulano1", "password1", StatusType.ACTIVE, roles)
                 .personalInformation(personalInformation1)
@@ -57,8 +74,10 @@ class UserServiceTest {
     }
 
     @Test
+    @TestSecurity(user = "testUser", roles = {"admin", "user"})
     void saveNonexistentUserTest() {
-        Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(null);
+        Mockito.when(userRepository.userIsNotAlreadyRegistry(Mockito.anyString())).thenReturn(true);
+        Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(user);
         Mockito.when(userService.saveUser(userDto)).thenAnswer(invocationOnMock -> {
             User user1 = (User) invocationOnMock.getArgument(0);
             user1.setId(1L);
@@ -71,8 +90,13 @@ class UserServiceTest {
 
     @Test
     void saveWithExistentUserTest() {
-        Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(user);
+        Mockito.when(userRepository.userIsNotAlreadyRegistry(Mockito.anyString())).thenReturn(false);
         Assertions.assertThrows(WebApplicationException.class, () -> userService.saveUser(userDto));
+    }
+
+    @Test
+    void saveNonExistentAdminUserTest() {
+        Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(null);
     }
 
     @Test
@@ -94,10 +118,12 @@ class UserServiceTest {
     }
 
     @Test
+    @TestSecurity(user = "testUser", roles = {"admin", "user"})
     void editExistentUserTest() {
         user.setId(1L);
         userDto.setId(1L);
         Mockito.when(userRepository.findByIdOptional(Mockito.anyLong())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findUserByUsername(Mockito.anyString())).thenReturn(user);
         Mockito.when(userService.editUser(userDto)).thenAnswer(i -> {
             User user = (User) i.getArgument(0);
             user.setId(1L);

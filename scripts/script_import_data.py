@@ -1,4 +1,5 @@
 import pandas as pd
+import docker
 from sqlalchemy import create_engine, text
 
 
@@ -17,8 +18,8 @@ tb_country = pd.DataFrame(dir_country, columns=["id", "name", "cod", "status"])
 tb_shipOwner = pd.DataFrame(dir_shipOwner, columns=["id", "cod", "country_id", "nickname", "name", "is_active"])
 tb_porto = pd.DataFrame(dir_porto, columns=["id", "bigram", "trigram", "name", "country_id"])
 tb_port_facility = pd.DataFrame(dir_port_facility, columns=["id", "acronym_port", "acronym_port_antaq", "name", "is_active", "port_type"])
-tb_area = pd.DataFrame(dir_area, columns=["id", "acronym", "acronym_mooring", "description", "port_facility_id"])
-tb_berth = pd.DataFrame(dir_berth, columns=["id", "acronym_berth", "acronym_berth_antaq", "name", "mooring_location_id"])
+tb_area = pd.DataFrame(dir_area, columns=["id", "acronym", "acronym_antaq", "description", "port_facility_id"])
+tb_berth = pd.DataFrame(dir_berth, columns=["id", "acronym_berth", "acronym_berth_antaq", "name", "mooringlocation_id"])
 tb_product_group = pd.DataFrame(dir_product_group, columns=["id", "acronym", "description"])
 tb_product = pd.DataFrame(dir_product, columns=["id", "acronym", "description", "product_group_id","is_active"])
 
@@ -28,14 +29,17 @@ tb_country.to_sql("country", engine, if_exists="append", index=False)
 tb_shipOwner.to_sql("ship_owner", engine, if_exists="append", index=False)
 tb_porto.to_sql("port", engine, if_exists="append", index=False)
 tb_port_facility.to_sql("port_facility", engine, if_exists="append", index=False)
-tb_area.to_sql("mooring_location", engine, if_exists="append", index=False)
+tb_area.to_sql("operational_area", engine, if_exists="append", index=False)
 tb_berth.to_sql("berth", engine, if_exists="append", index=False)
 tb_product_group.to_sql("product_group", engine, if_exists="append", index=False)
 tb_product.to_sql("product", engine, if_exists="append", index=False)
 
 # Create admin user
 with engine.begin() as connection:
-  connection.execute(text("INSERT INTO optimate_user (receive_emails, status, id, password_hash, username) VALUES (false, 2, 1, 'password', 'admin')"))
+  connection.execute(text("INSERT INTO optimate_user (receive_emails, status, id, password_hash, username) VALUES (false, 2, 1, '$2a$10$d80hIEq26eFIcORi4tHdxubUwvrcty2dpRAuLOPN9jy6aBoOYp0Ru', 'admin')"))
   connection.execute(text("INSERT INTO user_roles(id, role) VALUES(1, 'admin')"))
+  connection.execute(text("INSERT INTO avatar(id, user_id, avatar220, avatar35, avatar70) VALUES(1, 1, lo_import('/home/user.png'), null, null)"))
+  connection.execute(text("INSERT INTO business_area(id, name, description) VALUES(1, 'Agência de Navegação','Responsáveis por fazer circular informações essenciais entre todas as partes envolvidas no transporte marítimo')"))
 
+#Close connection
 engine.dispose()

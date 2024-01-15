@@ -28,7 +28,7 @@ class CompanyCreateResourceTest {
     }
 
     @Test
-    @TestSecurity(authorizationEnabled = false)
+    @TestSecurity(user = "testUser", roles = {"admin", "user"})
     void saveCompanyTest() {
         Mockito.when(companyServiceMock.saveCompany(Mockito.any())).thenReturn(new CompanyDto());
         RestAssured

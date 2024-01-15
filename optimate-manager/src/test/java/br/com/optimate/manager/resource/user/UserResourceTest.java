@@ -1,5 +1,6 @@
 package br.com.optimate.manager.resource.user;
 
+import br.com.optimate.manager.domain.user.User;
 import br.com.optimate.manager.dto.UserDto;
 import br.com.optimate.manager.service.UserService;
 import io.quarkus.test.InjectMock;
@@ -13,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @TestHTTPEndpoint(UserResource.class)
@@ -86,7 +85,7 @@ class UserResourceTest {
     @Test
     @TestSecurity(user = "userTest", roles = {"admin", "user"})
     void getCurrentUserTest() {
-        Mockito.when(userService.getCurrentUser()).thenReturn(new UserDto());
+        Mockito.when(userService.getCurrentUser()).thenReturn(new User());
         RestAssured
                 .given()
                 .contentType("application/json")

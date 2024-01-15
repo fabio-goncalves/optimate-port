@@ -38,13 +38,11 @@ public class UserService implements AbstractService {
 
     @Transactional
     public UserDto saveUser(UserDto userDto) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(userDto.getUsername()));
-        optionalUser.ifPresent(user -> {
-            throw new WebApplicationException("Username já cadastrado!", Response.Status.BAD_REQUEST);
-        });
+        User user = userMapper.toEntity(userDto);
+        checkUsername(user.getUsername());
+        validateCompanyUser(user);
         if(Optional.ofNullable(userDto.getAvatar()).isPresent())
             userDto.setAvatar(null);
-        User user = userMapper.toEntity(userDto);
         userRepository.persist(user);
         return userMapper.toDto(user);
     }
@@ -66,6 +64,7 @@ public class UserService implements AbstractService {
         Optional<User> optionalUser = userRepository.findByIdOptional(userDto.getId());
         User user = optionalUser.orElseThrow(() ->
                 new WebApplicationException(Response.Status.NOT_FOUND));
+        validateCompanyUser(user);
         userRepository.persist(userMapper.toEntity(userDto));
         return userMapper.toDto(user);
     }
@@ -78,21 +77,20 @@ public class UserService implements AbstractService {
         return "Usuário excluído com sucesso!";
     }
 
-    public UserDto getCurrentUser() {
-        return userMapper.toDto(userRepository.findUserByUsername(jwt.getName()));
+    public User getCurrentUser() {
+        return userRepository.findUserByUsername(jwt.getName());
     }
 
     @Transactional
     public UserDto changePassword(String currentPassword, String newPassword) {
-        Optional<UserDto> optionalUserDto = Optional.ofNullable(getCurrentUser());
-        optionalUserDto.ifPresent(userDto -> {
-            User user = userMapper.toEntity(userDto);
+        Optional<User> optionalUser = Optional.ofNullable(getCurrentUser());
+        optionalUser.ifPresent(user -> {
             if (!matches(user, currentPassword))
                 throw new ClientErrorException("Current password does not match", Response.Status.CONFLICT);
-            userDto.setPassword(BcryptUtil.bcryptHash(newPassword));
+            user.setPassword(BcryptUtil.bcryptHash(newPassword));
             userMapper.toDto(user);
         });
-        return optionalUserDto.orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
+        return userMapper.toDto(optionalUser.orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND)));
     }
 
     @Transactional
@@ -113,5 +111,19 @@ public class UserService implements AbstractService {
 
     public boolean matches(User user, String password) {
         return BcryptUtil.matches(password, user.getPassword());
+    }
+
+    public boolean validateCompanyUser(User user) {
+        User loggedUser = getCurrentUser();
+        boolean isValidate = loggedUser.getRoles().contains("admin") && loggedUser.getCompanyList()
+                .stream().anyMatch(company -> user.getCompanyList().contains(company));
+        if(!isValidate)
+            throw new WebApplicationException("Credenciais inválidas!", Response.Status.BAD_REQUEST);
+        return true;
+    }
+
+    public void checkUsername(String username) {
+        if(!userRepository.userIsNotAlreadyRegistry(username))
+            throw new WebApplicationException("Username já cadastrado!", Response.Status.BAD_REQUEST);
     }
 }

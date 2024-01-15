@@ -19,7 +19,6 @@ public class OperationalArea implements AbstractEntity {
     private Long id;
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(unique = true)
     private String acronym;
     @NotNull
     @Size(min = 1, max = 20)
