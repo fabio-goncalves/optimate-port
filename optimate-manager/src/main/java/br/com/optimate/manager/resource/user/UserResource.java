@@ -3,11 +3,11 @@ package br.com.optimate.manager.resource.user;
 import br.com.optimate.manager.dto.UserDto;
 import br.com.optimate.manager.resource.AbstractResource;
 import br.com.optimate.manager.service.UserService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
 
 @Path("/api/user")
 @RolesAllowed("admin")
@@ -32,6 +32,13 @@ public class UserResource extends AbstractResource<UserService> {
     @Path("/findUserByUsername")
     public Response findUserByUsername(UserDto userDto) {
         return Response.ok(service.findUserByUsername(userDto)).build();
+    }
+
+    @GET
+    @PermitAll
+    @Path("/findUser")
+    public Response findUser(@QueryParam("username") String username) {
+        return Response.ok(service.findUser(username)).build();
     }
 
     @POST

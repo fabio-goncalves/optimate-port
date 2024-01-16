@@ -60,6 +60,13 @@ public class UserService implements AbstractService {
     }
 
     @Transactional
+    public UserDto findUser(String username) {
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findUserByUsername(username));
+        User user = optionalUser.orElseThrow(() ->
+                new WebApplicationException(Response.Status.NOT_FOUND));
+        return userMapper.toDto(user);
+    }
+    @Transactional
     public UserDto editUser(UserDto userDto) {
         Optional<User> optionalUser = userRepository.findByIdOptional(userDto.getId());
         User user = optionalUser.orElseThrow(() ->
