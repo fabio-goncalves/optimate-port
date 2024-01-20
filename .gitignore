@@ -44,3 +44,4 @@ nb-configuration.xml
 
 # Import BD data
 import-files/
+jenkins/
